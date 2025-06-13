@@ -498,14 +498,14 @@
                 <div class="ip-block max-w-[2800px]">
                     <div class="ip-label mb-1">IPv4</div>
 
-                    <div class="flex items-center justify-between w-full">
-                        <button class="copy-dns text-lime-300 font-mono hover:text-lime-400 truncate" data-copy="121.131.141.157">
+                    <div class="flex items-center justify-between">
+                        <button class="copy-dns text-lime-300 hover:text-lime-400 text-xl md:text-2xl leading-tight tracking-wider truncate" data-copy="121.131.141.157">
                             121.131.141.157
                         </button>
 
                         <div class="flex items-center gap-1 text-sm text-white/70 font-mono min-w-[60px] justify-end">
                             <div id="ping-dot" class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span id="ping-latency">--ms</span>
+                            <span id="ping-latency">Inf</span>
                         </div>
                     </div>
                 </div>
@@ -514,7 +514,7 @@
                     <button class="tag btn-copy" data-copy="https://dns.onetwohour.com/dns-query">DoH</button>
                     <button class="tag btn-copy" data-copy="tls://dns.onetwohour.com">DoT</button>
                     <button class="tag btn-copy" data-copy="quic://dns.onetwohour.com">DoQ</button>
-                    <button class="tag btn-copy" data-copy="h3://dns.onetwohour.com">HTTP/3</button>
+                    <button class="tag btn-copy" data-copy="h3://dns.onetwohour.com/dns-query">HTTP/3</button>
                 </div>
                 <div class="nolog text-lg">No Logs. Ever.</div>
                 <button class="btn" id="guideBtn"><span class="content">설정 가이드 보기</span></button>
@@ -876,16 +876,30 @@
                 toast.classList.add('opacity-0');
             }, 1500);
         }
-        async function checkPing(host) {
+        async function checkPing(host, timeout = 5000) {
+            const url = `https://${host}/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB`;
             const start = performance.now();
+
             try {
-                await fetch(`https://${host}/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB`, {
-                    method: "GET",
-                    mode: "no-cors"
-                });
-            } catch (_) {}
-            const end = performance.now();
-            return end - start;
+                await Promise.race([
+                    fetch(url, {
+                        method: "GET",
+                        mode: "no-cors",
+                        cache: "no-store"
+                    }),
+                    new Promise((_, reject) => setTimeout(reject, timeout, new Error("timeout")))
+                ]);
+                return {
+                    ok: true,
+                    rtt: performance.now() - start
+                };
+            } catch (err) {
+                return {
+                    ok: false,
+                    rtt: performance.now() - start,
+                    error: err.message
+                };
+            }
         }
 
         function updatePingStatus(ms) {
@@ -893,11 +907,11 @@
             const text = document.getElementById("ping-latency");
             if (!dot || !text) return;
 
-            if (ms < 30) dot.className = "w-3 h-3 rounded-full bg-green-500";
-            else if (ms < 70) dot.className = "w-3 h-3 rounded-full bg-yellow-400";
+            if (ms.rtt < 30 && ms.ok) dot.className = "w-3 h-3 rounded-full bg-green-500";
+            else if (ms.rtt < 70 && ms.ok) dot.className = "w-3 h-3 rounded-full bg-yellow-400";
             else dot.className = "w-3 h-3 rounded-full bg-red-500";
 
-            text.textContent = `${Math.round(ms)}ms`;
+            text.textContent = ms.ok ? `${Math.round(ms.rtt)}ms` : "Inf";
         }
 
         const host = "dns.onetwohour.com";
