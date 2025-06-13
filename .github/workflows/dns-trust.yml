@@ -1,0 +1,50 @@
+name: DNS Trust Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  dns_trust:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check DNSSEC
+        continue-on-error: true
+        run: |
+          if dig +dnssec +adflag @121.131.141.157 example.com | grep -q 'ad'; then
+            echo "🔒 DNSSEC: PASS"
+          else
+            echo "🚨 DNSSEC: FAIL"
+            exit 1
+          fi
+
+      - name: Check DNS over TLS
+        continue-on-error: true
+        run: |
+          if nc -z 121.131.141.157 853; then
+            echo "🔒 DoT: PASS"
+          else
+            echo "🚨 DoT: FAIL"
+            exit 1
+          fi
+
+      - name: Check DNS over HTTPS
+        continue-on-error: true
+        run: |
+          echo -n -e '\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07example\x03com\x00\x00\x01\x00\x01' > /tmp/query.bin
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/dns-message" \
+            --data-binary @/tmp/query.bin \
+            --http2 \
+            https://dns.onetwohour.com/dns-query)
+
+          if [ "$STATUS" = "200" ]; then
+            echo "🔒 DoH (example.com A): PASS"
+          else
+            echo "🚨 DoH: FAIL (HTTP $STATUS)"
+            exit 1
+          fi
