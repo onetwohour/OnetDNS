@@ -498,7 +498,13 @@
                 <div class="ip-block">
                     <div class="ip-label">IPv4</div>
                     <div class="ip-value">
-                        <button class="copy-dns text-lime-300 font-mono hover:text-lime-400" data-copy=121.131.141.157>121.131.141.157</button>
+                        <div class="flex items-center justify-between">
+                            <button class="copy-dns text-lime-300 font-mono hover:text-lime-400" data-copy=121.131.141.157>121.131.141.157</button>
+                            <div class="flex items-center gap-1 ml-2 text-sm text-white/70 font-mono">
+                                <div id="ping-dot" class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <span id="ping-latency">--ms</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="protocols">
@@ -868,6 +874,41 @@
                 toast.classList.add('opacity-0');
             }, 1500);
         }
+        async function checkPing(host) {
+            const start = performance.now();
+            try {
+                await fetch(`https://${host}/dns-query`, {
+                    method: "HEAD",
+                    mode: "no-cors"
+                });
+            } catch (_) {}
+            const end = performance.now();
+            return end - start;
+        }
+
+        function updatePingStatus(ms) {
+            const dot = document.getElementById("ping-dot");
+            const text = document.getElementById("ping-latency");
+            if (!dot || !text) return;
+
+            if (ms < 30) dot.className = "w-3 h-3 rounded-full bg-green-500";
+            else if (ms < 70) dot.className = "w-3 h-3 rounded-full bg-yellow-400";
+            else dot.className = "w-3 h-3 rounded-full bg-red-500";
+
+            text.textContent = `${Math.round(ms)}ms`;
+        }
+
+        const host = "dns.onetwohour.com";
+
+        (async function pingLoop() {
+            const latency = await checkPing(host);
+            updatePingStatus(latency);
+
+            setInterval(async () => {
+                const latency = await checkPing(host);
+                updatePingStatus(latency);
+            }, 1000);
+        })();
 
         document.addEventListener('touchend', () => {
             if (noticeCard.classList.contains("hovering")) {
@@ -905,7 +946,7 @@
     <div class="footer mt-16 mb-10 text-center text-white/70 text-sm leading-relaxed">
         <p>👤 만든이: <span class="font-semibold">onetwohour</span></p>
         <p>✉️ 이메일: <a href="mailto:mail@onetwohour.com" class="underline hover:text-lime-300">mail@onetwohour.com</a></p>
-        <p>🌐 GitHub: <a href="https://github.com/onetwohour/CleanDNS" target="_blank" class="underline hover:text-lime-300">github.com/onetwohour</a></p>
+        <p>🌐 GitHub: <a href="https://github.com/onetwohour/CleanDNS" target="_blank" class="underline hover:text-lime-300">github.com/onetwohour/CleanDNS</a></p>
         <p class="mt-2 text-xs text-white/30">© 2025 Clean DNS. 모든 권리 보유.</p>
     </div>
 </body>
