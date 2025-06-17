@@ -35,17 +35,47 @@
             margin: 0;
             padding: 0;
             background: linear-gradient(185deg, #0f172a, #1e293b, #111827);
+            background-color: #0f172a;
             background-size: 400% 400%;
             animation: bgMove 20s ease infinite;
             color: #fff;
-            background-image: url('./background.webp');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             user-select: none;
         }
 
+        #bg-container {
+            position: fixed;
+            top: -5vh;
+            left: -5vw;
+            width: 110vw;
+            height: 110vh;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 1s ease;
+        }
+
+        #bg-low {
+            background-image: url('./background_q75.webp');
+            z-index: 1;
+        }
+
+        #bg-mid {
+            background-image: url('./background_q85.webp');
+            z-index: 2;
+        }
+
+        #bg-full {
+            background-image: url('./background.webp');
+            z-index: 3;
+        }
 
         .container {
             min-height: 500vh;
@@ -436,6 +466,11 @@
 
 <body>
     <div class="container">
+        <div id="bg-container">
+            <div id="bg-low" class="bg-layer"></div>
+            <div id="bg-mid" class="bg-layer"></div>
+            <div id="bg-full" class="bg-layer"></div>
+        </div>
         <div class="notice-card card notice-slider-wrapper">
             <div class="notice-slider" id="noticeSlider">
                 <div class="slide">
@@ -661,9 +696,6 @@
         window.addEventListener('beforeunload', () => {
             window.scrollTo(0, 0);
         });
-        window.onload = () => {
-            setTimeout(() => window.scrollTo(0, 0), 10);
-        };
 
         const observer = new IntersectionObserver(
             (entries) => {
