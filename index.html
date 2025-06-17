@@ -540,7 +540,7 @@
 
                         <div class="flex items-center gap-1 text-sm text-white/70 font-mono min-w-[60px] justify-end">
                             <div id="ping-dot" class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span id="ping-latency">Inf</span>
+                            <span id="ping-state">Off</span>
                         </div>
                     </div>
                 </div>
@@ -908,10 +908,12 @@
                 toast.classList.add('opacity-0');
             }, 1500);
         }
-        async function checkPing(host, timeout = 5000) {
-            const url = `https://${host}/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB`;
-            const start = performance.now();
+        
+        async function checkPing(host, timeout=5000) {
+            const randomPath = Math.random().toString(36).substring(2);
+            const url = `https://${host}/${randomPath}`;
 
+            const start = performance.now();
             try {
                 await Promise.race([
                     fetch(url, {
@@ -925,25 +927,22 @@
                     ok: true,
                     rtt: performance.now() - start
                 };
-            } catch (err) {
+            } catch (e) {
                 return {
                     ok: false,
-                    rtt: performance.now() - start,
-                    error: err.message
+                    rtt: performance.now() - start
                 };
             }
         }
 
         function updatePingStatus(ms) {
             const dot = document.getElementById("ping-dot");
-            const text = document.getElementById("ping-latency");
+            const text = document.getElementById("ping-state");
             if (!dot || !text) return;
 
-            if (ms.rtt < 30 && ms.ok) dot.className = "w-3 h-3 rounded-full bg-green-500";
-            else if (ms.rtt < 70 && ms.ok) dot.className = "w-3 h-3 rounded-full bg-yellow-400";
+            if (ms.ok) dot.className = "w-3 h-3 rounded-full bg-green-500";
             else dot.className = "w-3 h-3 rounded-full bg-red-500";
-
-            text.textContent = ms.ok ? `${Math.round(ms.rtt)}ms` : "Inf";
+            text.textContent = ms.ok ? "On" : "Off";
         }
 
         const host = "dns.onetwohour.com";
