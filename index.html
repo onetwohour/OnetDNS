@@ -462,21 +462,52 @@
             z-index: 1;
         }
 
-        .stat-slide {
-            display: inline-block;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            will-change: transform, opacity;
+        .rolling,
+        .rolling * {
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            color: inherit;
+            vertical-align: middle;
+        }
+
+        .digit-group {
             position: relative;
+            width: 1ch;
+            height: 1em;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: -0.15em;
+            text-align: center;
         }
 
-        .stat-slide.slide-out {
-            transform: translateY(-0.7em);
-            opacity: 0;
+        .digit-group::before,
+        .digit-stack span {
+            font-size: inherit !important;
         }
 
-        .stat-slide.slide-in {
-            transform: translateY(0.7em);
-            opacity: 0;
+        .digit-group::before {
+            content: "0";
+            visibility: hidden;
+            line-height: 1em;
+            height: 1em;
+        }
+
+        .digit-stack {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            transition: transform .4s ease;
+        }
+
+        .digit-stack span {
+            display: block;
+            height: 1em;
+            line-height: 1em;
+            text-align: center;
         }
     </style>
 </head>
@@ -560,11 +591,20 @@
                             <span id="ping-state">Off</span>
                         </div>
                     </div>
-                    <div class="text-sm text-white/80 leading-relaxed text-right space-y-1" id="dns-stats-notice">
-                        총 요청: <b class="text-lime-300" id="dns-total">0</b> 회<br>
-                        차단된 요청: <b class="text-red-400" id="dns-blocked">0</b> 회
-                        (<span id="dns-ratio">0</span>%)<br>
+                    <div id="dns-stats-notice" class="text-sm text-white/80 text-right">
+                        <div id="dns-stats" class="space-y-1">
+                            <div class="dns-line inline-flex items-baseline gap-[0.2rem]">
+                                총 요청: <span class="rolling" id="dns-total">0</span>회
+                            </div>
+                            <br>
+                            <div class="dns-line inline-flex items-baseline gap-[0.2rem]">
+                                차단된 요청:
+                                <span class="rolling text-red-400" id="dns-blocked">0</span>회 (
+                                <span class="rolling" id="dns-ratio">0</span>%)
+                            </div>
+                        </div>
                     </div>
+
                 </div>
                 <div class="protocols">
                     <p>지원 프로토콜</p>
@@ -979,28 +1019,40 @@
             }, 1000);
         })();
 
-        const totalEl = document.getElementById('dns-total');
-        const blockedEl = document.getElementById('dns-blocked');
-        const ratioEl = document.getElementById('dns-ratio');
+        test = 0;
 
-        function slideChange(el, newVal) {
-            const prev = el.textContent.replace(/,/g, '');
-            const formatted = Number(newVal).toLocaleString();
+        function ensureDigitGroups(el, length) {
+            const cur = el.querySelectorAll('.digit-group').length;
+            for (let i = 0; i < length - cur; i++) {
+                const group = document.createElement('span');
+                group.className = 'digit-group';
 
-            if (prev === String(newVal)) return;
+                const stack = document.createElement('span');
+                stack.className = 'digit-stack';
+                for (let n = 0; n < 10; n++) {
+                    const s = document.createElement('span');
+                    s.textContent = n;
+                    stack.appendChild(s);
+                }
 
-            el.classList.remove('slide-in');
-            el.classList.add('slide-out');
+                group.appendChild(stack);
+                el.prepend(group);
+            }
+        }
 
-            setTimeout(() => {
-                el.textContent = formatted;
-                el.classList.remove('slide-out');
-                el.classList.add('slide-in');
-            }, 300);
+        function setRollingNumber(el, value) {
+            const str = String(value);
+            ensureDigitGroups(el, str.length);
 
-            setTimeout(() => {
-                el.classList.remove('slide-in');
-            }, 600);
+            const groups = [...el.querySelectorAll('.digit-group')].reverse();
+            const span = groups[0].querySelector('.digit-stack span');
+            const height = parseFloat(getComputedStyle(span).lineHeight);
+
+            [...str].reverse().forEach((ch, idx) => {
+                const digit = +ch;
+                const stack = groups[idx].firstElementChild;
+                stack.style.transform = `translateY(-${digit * height}px)`;
+            });
         }
 
         async function updateDnsStats() {
@@ -1014,11 +1066,10 @@
                     ratio
                 } = await res.json();
 
-                slideChange(document.getElementById('dns-total'), queries);
-                slideChange(document.getElementById('dns-blocked'), blocked);
-                slideChange(document.getElementById('dns-ratio'), ratio);
-            } catch (err) {
-            }
+                setRollingNumber(document.getElementById('dns-total'), queries);
+                setRollingNumber(document.getElementById('dns-blocked'), blocked);
+                setRollingNumber(document.getElementById('dns-ratio'), ratio);
+            } catch (e) {}
         }
         updateDnsStats();
         setInterval(updateDnsStats, 1000);
