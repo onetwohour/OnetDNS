@@ -606,17 +606,17 @@
                     <button class="tag btn-copy" data-copy="quic://dns.onetwohour.com">DoQ</button>
                     <button class="tag btn-copy" data-copy="h3://dns.onetwohour.com/dns-query">HTTP/3</button>
                 </div>
-                <div class="nolog text-lg">No Logs. Ever.</div>
+                <div class="nolog text-xl">No Logs. Ever.</div>
                 <div id="dns-stats-notice" class="text-sm text-white/80 text-center">
-                    <div id="dns-stats" class="space-y-1">
+                    <div id="dns-stats" class="space-y-1 text-base">
                         <div class="dns-line inline-flex items-baseline gap-[0.2rem]">
-                            총 요청: <span class="rolling" id="dns-total">0</span>회
+                            총 요청: <span class="rolling text-lime-400" id="dns-total">0</span>회
                         </div>
                         <br>
                         <div class="dns-line inline-flex items-baseline gap-[0.2rem]">
                             차단된 요청:
                             <span class="rolling text-red-400" id="dns-blocked">0</span>회 (
-                            <span class="rolling" id="dns-ratio">0</span>%)
+                            <span class="rolling text-red-400" id="dns-ratio">0</span>%)
                         </div>
                     </div>
                 </div>
