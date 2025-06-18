@@ -461,6 +461,23 @@
             position: relative;
             z-index: 1;
         }
+
+        .stat-slide {
+            display: inline-block;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            will-change: transform, opacity;
+            position: relative;
+        }
+
+        .stat-slide.slide-out {
+            transform: translateY(-0.7em);
+            opacity: 0;
+        }
+
+        .stat-slide.slide-in {
+            transform: translateY(0.7em);
+            opacity: 0;
+        }
     </style>
 </head>
 
@@ -538,10 +555,15 @@
                             121.131.141.157
                         </button>
 
-                        <div class="flex items-center gap-1 text-sm text-white/70 font-mono min-w-[60px] justify-end">
+                        <div class="flex items-center gap-1 text-sm text-white/70 min-w-[60px] justify-end">
                             <div id="ping-dot" class="w-3 h-3 rounded-full bg-red-500"></div>
                             <span id="ping-state">Off</span>
                         </div>
+                    </div>
+                    <div class="text-sm text-white/80 leading-relaxed text-right space-y-1" id="dns-stats-notice">
+                        총 요청: <b class="text-lime-300" id="dns-total">0</b> 회<br>
+                        차단된 요청: <b class="text-red-400" id="dns-blocked">0</b> 회
+                        (<span id="dns-ratio">0</span>%)<br>
                     </div>
                 </div>
                 <div class="protocols">
@@ -908,8 +930,8 @@
                 toast.classList.add('opacity-0');
             }, 1500);
         }
-        
-        async function checkPing(host, timeout=5000) {
+
+        async function checkPing(host, timeout = 5000) {
             const randomPath = Math.random().toString(36).substring(2);
             const url = `https://${host}/${randomPath}`;
 
@@ -956,6 +978,50 @@
                 updatePingStatus(latency);
             }, 1000);
         })();
+
+        const totalEl = document.getElementById('dns-total');
+        const blockedEl = document.getElementById('dns-blocked');
+        const ratioEl = document.getElementById('dns-ratio');
+
+        function slideChange(el, newVal) {
+            const prev = el.textContent.replace(/,/g, '');
+            const formatted = Number(newVal).toLocaleString();
+
+            if (prev === String(newVal)) return;
+
+            el.classList.remove('slide-in');
+            el.classList.add('slide-out');
+
+            setTimeout(() => {
+                el.textContent = formatted;
+                el.classList.remove('slide-out');
+                el.classList.add('slide-in');
+            }, 300);
+
+            setTimeout(() => {
+                el.classList.remove('slide-in');
+            }, 600);
+        }
+
+        async function updateDnsStats() {
+            try {
+                const res = await fetch('/.netlify/functions/stats', {
+                    cache: 'no-store'
+                });
+                const {
+                    queries,
+                    blocked,
+                    ratio
+                } = await res.json();
+
+                slideChange(document.getElementById('dns-total'), queries);
+                slideChange(document.getElementById('dns-blocked'), blocked);
+                slideChange(document.getElementById('dns-ratio'), ratio);
+            } catch (err) {
+            }
+        }
+        updateDnsStats();
+        setInterval(updateDnsStats, 1000);
 
         document.addEventListener('touchend', () => {
             if (noticeCard.classList.contains("hovering")) {
