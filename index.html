@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onet DNS</title>
+    <meta name="description" content="광고 차단, 암호화, Privacy-First 정책이 적용된 Onet DNS" />
+    <meta property="og:title" content="Onet DNS" />
+    <meta property="og:description" content="추적 없는 안전한 DNS. Android, iOS, Windows 등 모든 플랫폼 지원." />
+    <meta property="og:type" content="website" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <meta name="google-site-verification" content="RAa1iSgrWRNlz7VzAxS0z8jYZpdCdzEKDUWt9qFMxFI" />
+    <style>
+        :root {
+            --btn-x: 50%;
+            --btn-y: 50%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: "Pretendard Variable";
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(185deg, #0f172a, #1e293b, #111827);
+            background-color: #0f172a;
+            background-size: 400% 400%;
+            animation: bgMove 20s ease infinite;
+            color: #fff;
+            user-select: none;
+        }
+
+        #bg-container {
+            position: fixed;
+            top: -5vh;
+            left: -5vw;
+            width: 110vw;
+            height: 110vh;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 1s ease;
+        }
+
+        #bg-low {
+            background-image: url("./background_q75.webp");
+            z-index: 1;
+        }
+
+        #bg-mid {
+            background-image: url("./background_q85.webp");
+            z-index: 2;
+        }
+
+        #bg-full {
+            background-image: url("./background.webp");
+            z-index: 3;
+        }
+
+        .container {
+            min-height: 500vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            padding: 4rem 2rem;
+        }
+
+        .sticky-area {
+            position: static;
+        }
+
+        .sticky-area.fixed-lock {
+            position: fixed !important;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            width: 100%;
+            margin: auto;
+            z-index: 10;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 3rem 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            margin-bottom: 2rem;
+        }
+
+        #mainCard::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -2.2rem;
+            transform: translateX(-50%);
+            width: 20rem;
+            height: 2rem;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.4));
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            animation: bounce 2s ease-in-out infinite;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(8px);
+            }
+        }
+
+        #mainCard.hide-after::after {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: 2.25rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .ip-block {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .ip-label {
+            font-size: 0.875rem;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .ip-value {
+            font-size: 1.25rem;
+            color: #a3e635;
+        }
+
+        .protocols {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .protocols p {
+            font-size: 0.875rem;
+            color: #888;
+            margin-bottom: 0.75rem;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 0.875rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            margin: 0.375rem;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nolog {
+            text-align: center;
+            color: #a3e635;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            --x: var(--btn-x);
+            --y: var(--btn-y);
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 1rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            outline: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.25s ease-in-out, border-color 0.3s;
+        }
+
+        .btn::before,
+        .btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            transition: opacity 1.2s ease;
+        }
+
+        .btn::before {
+            background-image: linear-gradient(135deg, rgba(0, 174, 255, 0.4), rgba(113, 10, 122, 0.4));
+            opacity: 1;
+        }
+
+        .btn::after {
+            background-image: linear-gradient(135deg, rgba(0, 174, 255, 0.7), rgba(113, 10, 122, 0.7));
+            opacity: 0;
+        }
+
+        .btn.btn-hovered {
+            transform: scale(1.1);
+            background-image: radial-gradient(circle at var(--btn-x) var(--btn-y), rgb(255, 255, 255) 0%, transparent 30%);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #fff;
+            cursor: none;
+        }
+
+        .btn.btn-hovered::before {
+            opacity: 0;
+        }
+
+        .btn.btn-hovered::after {
+            opacity: 1;
+        }
+
+        .btn>.content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-buttons .tab-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ccc;
+            padding: 0.5rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 0.96rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            outline: none;
+        }
+
+        .tab-buttons .tab-btn.active {
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+        }
+
+        .tab-content.hidden {
+            display: none;
+        }
+
+        details[open] > summary svg {
+            transform: rotate(180deg);
+        }
+
+        .btn.no-gradient::before,
+        .btn.no-gradient::after {
+            display: none;
+        }
+
+        .btn.no-gradient {
+            background: rgba(255, 255, 255, 0.08);
+            transform: none !important;
+            border-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        #promo {
+            margin-top: 12rem;
+            min-height: 4rem;
+            font-size: 1.05rem;
+            color: #ddd;
+            text-align: center;
+            max-width: 480px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #promo.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        #promo.invisible {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+
+        #guideBtn {
+            touch-action: none;
+            -ms-touch-action: none;
+        }
+
+        .footer {
+            text-align: center;
+            color: #555;
+            font-size: 0.6875rem;
+            margin-top: 2rem;
+        }
+
+        #scrollIndicator {
+            position: absolute;
+            left: 50%;
+            bottom: -2rem;
+            transform: translateX(-50%);
+            width: 6rem;
+            height: 2rem;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.4));
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            animation: bounce 2s ease-in-out infinite;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        #scrollIndicator.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #promo.large {
+            font-size: 1.65rem;
+            font-weight: 600;
+            color: #a3e635;
+            line-height: 1.4;
+        }
+
+        .notice-card {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .notice-card.hovering {
+            opacity: 1 !important;
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .notice-slider-wrapper {
+            padding: 3rem 0 !important;
+            align-content: center;
+            margin: 0 auto 2rem;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding-inline: 0.3rem;
+            padding-block: 1rem !important;
+            transition: height 0.4s ease-in-out;
+        }
+
+        .notice-slider {
+            display: flex;
+            --slide-gap: 24px;
+            gap: var(--slide-gap);
+            transition: transform 0.4s ease;
+            cursor: grab;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            max-width: 520px;
+            box-sizing: border-box;
+            opacity: 0.3;
+            transform: scale(0.92);
+            transition: all 0.3s ease;
+        }
+
+        .slide.current {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slide.prev,
+        .slide.next {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .notice-slider-wrapper .slide {
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: center;
+            padding: 0 2rem;
+        }
+
+        .text-overlay {
+            box-sizing: border-box;
+            padding-inline: 0.75rem;
+            padding-block: 1rem;
+            position: relative;
+        }
+
+        .text-overlay::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.005);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            z-index: 0;
+        }
+
+        .text-overlay>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .rolling,
+        .rolling * {
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            color: inherit;
+            vertical-align: middle;
+        }
+
+        .digit-group {
+            position: relative;
+            width: 1ch;
+            height: 1em;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: -0.175em;
+            text-align: center;
+        }
+
+        .digit-group::before,
+        .digit-stack span {
+            font-size: inherit !important;
+        }
+
+        .digit-group::before {
+            content: "0";
+            visibility: hidden;
+            line-height: 1em;
+            height: 1em;
+        }
+
+        .digit-stack {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s ease;
+        }
+
+        .digit-stack span {
+            display: block;
+            height: 1em;
+            line-height: 1em;
+            text-align: center;
+        }
+
+        .decimal-dot {
+            display: inline-block;
+            width: 0.4ch;
+            vertical-align: middle;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="bg-container">
+            <div id="bg-low" class="bg-layer"></div>
+            <div id="bg-mid" class="bg-layer"></div>
+            <div id="bg-full" class="bg-layer"></div>
+        </div>
+        <div class="notice-card card notice-slider-wrapper">
+            <div class="notice-slider" id="noticeSlider">
+                <div class="slide">
+                    <div class="text-overlay">
+                        <div class="text-base text-white/90 font-semibold mb-2">📢 공지사항</div>
+                        <div class="text-sm text-white/80 leading-relaxed">
+                            최고의 서비스를 위해 보조 DNS 서버를 반드시 설정해 주세요.
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="text-overlay">
+                        <div class="text-base text-white/90 font-semibold mb-2">⚠️ 주의</div>
+                        <div class="text-sm text-white/80 leading-relaxed">
+                            DDos 공격으로 인해 과도한 요청 시 일시적으로 차단됩니다.
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="text-overlay">
+                        <div class="text-base text-white/90 font-semibold mb-2 text-center">
+                            <span>💬 문의</span>
+                            <span class="ml-[2px] opacity-0">💬</span>
+                        </div>
+                        <div class="mt-4 flex justify-center items-center gap-2">
+                            <a href="mailto:mail@onetwohour.com" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-sm font-medium text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.85L3 20l1.15-4.255A9.863 9.863 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <span>Email</span>
+                            </a>
+                            <a href="https://discord.gg/gp3w9w7XXj" class="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] px-4 py-2 rounded-full text-sm font-medium text-white">
+                                <svg class="w-5 h-5" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                    <path fill="currentColor" d="M78.527 20.998c-10.973-8.229-21.412-8.001-21.412-8.001l-1.067 1.219c12.954 3.962 18.973 9.677 18.973 9.677-7.925-4.343-15.697-6.477-22.936-7.315-5.486-0.61-10.744-0.457-15.392 0.152-0.457 0-0.838 0.076-1.295 0.152-2.667 0.229-9.144 1.219-17.297 4.801-2.819 1.295-4.496 2.21-4.496 2.21s6.325-6.02 20.04-9.982l-0.762-0.914s-10.439-0.229-21.412 8.001c0 0-10.973 19.888-10.973 44.424 0 0 6.401 11.049 23.241 11.582 0 0 2.819-3.429 5.105-6.324-9.677-2.896-13.335-8.991-13.335-8.991s0.762 0.533 2.134 1.295c0.076 0.076 0.152 0.152 0.305 0.229 0.229 0.152 0.457 0.229 0.686 0.381 1.905 1.067 3.81 1.905 5.563 2.591 3.124 1.219 6.858 2.438 11.201 3.276 5.715 1.067 12.42 1.448 19.735 0.076 3.581-0.61 7.239-1.676 11.049-3.277 2.667-0.991 5.639-2.438 8.763-4.496 0 0-3.81 6.248-13.792 9.068 2.286 2.896 5.029 6.172 5.029 6.172C83.023 76.47 89.5 65.422 89.5 65.422c0-24.536-10.973-44.424-10.973-44.424z" />
+                                    <path fill="#5865F2" d="M30.751 58.335c-4.267 0-7.772-3.81-7.772-8.458s3.429-8.458 7.772-8.458 7.848 3.81 7.772 8.458c0 4.648-3.429 8.458-7.772 8.458zM58.563 58.335c-4.267 0-7.772-3.81-7.772-8.458s3.429-8.458 7.772-8.458 7.772 3.81 7.772 8.458-3.429 8.458-7.772 8.458z" />
+                                </svg>
+                                <span>Discord</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="text-overlay">
+                        <div class="text-base text-white/90 font-semibold mb-2 text-center">
+                            <span>✨ 후원</span>
+                            <span class="ml-[2px] opacity-0">✨</span>
+                        </div>
+                        <div class="mt-4 flex justify-center">
+                            <a href="https://www.buymeacoffee.com/onetwohour" target="_blank" class="inline-flex items-center gap-2 items-center bg-[#10b981] text-white px-4 py-2 rounded-full text-sm hover:bg-[#059669] transition">
+                                <span class="leading-none">☕ Buy me a coffee</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sticky-area">
+            <div class="card" id="mainCard">
+                <div class="title">Onet DNS</div>
+                <div class="subtitle">광고 차단 · 암호화 · Privacy-First 정책</div>
+                <div class="ip-block max-w-[2800px]">
+                    <div class="ip-label mb-1">IPv4</div>
+                    <div class="flex items-center justify-between">
+                        <button class="copy-dns text-lime-300 hover:text-lime-400 text-xl md:text-xl leading-tight tracking-wider truncate" data-copy="3.39.126.146">
+                            3.39.126.146
+                        </button>
+                        <div class="flex items-center gap-1 text-sm text-white/70 min-w-[60px] justify-end">
+                            <div id="ping-dot-one" class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span id="ping-state-one">Off</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="copy-dns text-lime-300 hover:text-lime-400 text-xl md:text-xl leading-tight tracking-wider truncate" data-copy="15.165.111.52">
+                            15.165.111.52
+                        </button>
+                        <div class="flex items-center gap-1 text-sm text-white/70 min-w-[60px] justify-end">
+                            <div id="ping-dot-two" class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span id="ping-state-two">Off</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="protocols">
+                    <p>지원 프로토콜</p>
+                    <button class="tag btn-copy" data-copy="https://one.dns.onetwohour.com/dns-query&#10;https://two.dns.onetwohour.com/dns-query">DoH</button>
+                    <button class="tag btn-copy" data-copy="tls://one.dns.onetwohour.com&#10;tls://two.dns.onetwohour.com">DoT</button>
+                    <button class="tag btn-copy" data-copy="quic://one.dns.onetwohour.com&#10;quic://two.dns.onetwohour.com">DoQ</button>
+                    <button class="tag btn-copy" data-copy="h3://one.dns.onetwohour.com/dns-query&#10;h3://two.dns.onetwohour.com/dns-query">HTTP/3</button>
+                </div>
+                <div class="nolog-enhanced text-center py-4">
+                    <div class="text-2xl font-bold text-lime-400">
+                        Zero Query Logs.
+                    </div>
+                </div>
+                <br>
+                <div id="dns-stats-notice" class="text-sm text-white/80 text-center">
+                    <div id="dns-stats" class="space-y-1 text-base">
+                        <div class="dns-line inline-flex items-baseline gap-[0.2rem]">총 요청: <span class="rolling text-lime-400" id="dns-total">0</span>회</div>
+                        <br />
+                        <div class="dns-line inline-flex items-baseline gap-[0.2rem]">
+                            차단된 요청:
+                            <span class="rolling text-red-400" id="dns-blocked">0</span>회 ( <span class="rolling text-red-400" id="dns-ratio">0</span>%)
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <button class="btn" id="guideBtn"><span class="content">설정 가이드 보기</span></button>
+            </div>
+            <div id="promo"></div>
+        </div>
+        <div id="popupCard" style="display: none;" class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="card max-w-lg w-full z-50">
+                <div class="title text-xl">설정 가이드</div>
+                <div class="tab-buttons flex justify-center mb-4 gap-2 flex-wrap">
+                    <button class="tab-btn active" data-target="tab-android">Android</button>
+                    <button class="tab-btn" data-target="tab-windows">Windows</button>
+                    <button class="tab-btn" data-target="tab-ios">iOS</button>
+                    <button class="tab-btn" data-target="tab-macos">macOS</button>
+                    <button class="tab-btn" data-target="tab-adguard">AdGuard</button>
+                </div>
+                <div class="tab-content" id="tab-android">
+                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                        <li><strong>설정</strong> → 연결 → 기타 연결 설정 → <strong>프라이빗 DNS</strong></li>
+                        <li class="mt-3">DNS 서버 주소에 다음 중 하나를 입력:</li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2 flex items-center gap-2">
+                                    🟢 Primary DNS 서버
+                                </div>
+                                <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline w-full text-left bg-black/20 px-3 py-2 rounded" data-copy="one.dns.onetwohour.com">
+                                    one.dns.onetwohour.com
+                                </button>
+                            </div>
+                        </li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2 flex items-center gap-2">
+                                    🔵 Secondary DNS 서버
+                                </div>
+                                <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline w-full text-left bg-black/20 px-3 py-2 rounded" data-copy="two.dns.onetwohour.com">
+                                    two.dns.onetwohour.com
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content hidden" id="tab-windows">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        🪟 Windows
+                    </h3>
+                    <p class="text-sm text-white/70 mb-4">
+                        Windows 11 및 최신 Windows 10 사용자는 보안을 위해 <strong>암호화된 DNS(DoH) 설정</strong>을 권장합니다.
+                    </p>
+                    <div class="space-y-3">
+                        <details class="bg-white/5 rounded-lg overflow-hidden">
+                            <summary class="font-semibold text-white p-4 cursor-pointer hover:bg-white/10 flex justify-between items-center">
+                                <span>1. 암호화된 DNS (DoH) 수동 설정</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </summary>
+                            <div class="details-content-wrapper">
+                                <div class="p-4 border-t border-white/10">
+                                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                                        <li><b>경로:</b> 설정 → 네트워크 및 인터넷 → Wi-Fi/이더넷 → 하드웨어 속성</li>
+                                        <li><b>DNS 서버 할당</b> 옆의 <b>[편집]</b> 버튼을 클릭합니다.</li>
+                                        <li class="mt-3"><b>설정 값:</b></li>
+                                        <li class="mt-2 list-none ml-[-1.25rem]">
+                                            <div class="bg-black/20 p-4 rounded-lg space-y-4">
+                                                <div>
+                                                    <div class="font-semibold text-white mb-2 flex items-center gap-2">
+                                                        🟢 Primary 서버
+                                                    </div>
+                                                    <div class="space-y-1">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">기본 설정 DNS:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left" data-copy="3.39.126.146">
+                                                                3.39.126.146
+                                                            </button>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">DNS 암호화:</span>
+                                                            <span class="text-white/90 text-sm flex-1">"HTTPS를 통한 DNS(수동)" 선택</span>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">HTTPS 템플릿:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left truncate" data-copy="https://one.dns.onetwohour.com/dns-query">
+                                                                https://one.dns.onetwohour.com/dns-query
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="font-semibold text-white mb-2 flex items-center gap-2">
+                                                        🔵 Secondary 서버
+                                                    </div>
+                                                    <div class="space-y-1">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">대체 DNS:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left" data-copy="15.165.111.52">
+                                                                15.165.111.52
+                                                            </button>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">DNS 암호화:</span>
+                                                            <span class="text-white/90 text-sm flex-1">"HTTPS를 통한 DNS(수동)" 선택</span>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-24">HTTPS 템플릿:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left truncate" data-copy="https://two.dns.onetwohour.com/dns-query">
+                                                                https://two.dns.onetwohour.com/dns-query
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </details>
+                        <details class="bg-white/5 rounded-lg overflow-hidden">
+                            <summary class="font-semibold text-white p-4 cursor-pointer hover:bg-white/10 flex justify-between items-center">
+                                <span>2. 레거시 IP 주소 설정 (구형 Windows)</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </summary>
+                            <div class="details-content-wrapper">
+                                <div class="p-4 border-t border-white/10">
+                                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                                        <li><b>경로:</b> 제어판 → 네트워크 및 인터넷 → 네트워크 및 공유 센터</li>
+                                        <li>어댑터 설정 변경 → 사용 중인 연결 우클릭 → 속성</li>
+                                        <li>인터넷 프로토콜 버전 4(TCP/IPv4) 선택 후 속성</li>
+                                        <li class="mt-3"><b>"다음 DNS 서버 주소 사용"</b> 선택 후 아래 IP 입력:</li>
+                                        <li class="mt-2 list-none ml-[-1.25rem]">
+                                            <div class="bg-black/20 p-4 rounded-lg">
+                                                <div class="grid grid-cols-1 gap-3">
+                                                    <div>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white/70 text-xs w-28">🟢 기본 설정 DNS:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left" data-copy="3.39.126.146">
+                                                                3.39.126.146
+                                                            </button>
+                                                        </div>
+                                                        <div class="flex items-center gap-2 mt-1">
+                                                            <span class="text-white/70 text-xs w-28">🔵 보조 DNS:</span>
+                                                            <button class="copy-dns text-lime-300 font-mono text-sm hover:text-lime-400 underline bg-black/20 px-3 py-1 rounded flex-1 text-left" data-copy="15.165.111.52">
+                                                                15.165.111.52
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="tab-ios">
+                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                        <li>iOS 14 이상의 버전인지 확인</li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2">🟢 Primary DNS 서버</div>
+                                <a href="./onetdns-one.mobileconfig" class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 underline" target="_blank">
+                                    📥 Primary DNS 프로필 다운로드
+                                </a>
+                                <div class="text-xs text-white/60 mt-1">one.dns.onetwohour.com</div>
+                            </div>
+                        </li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2">🔵 Secondary DNS 서버</div>
+                                <a href="./onetdns-two.mobileconfig" class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 underline" target="_blank">
+                                    📥 Secondary DNS 프로필 다운로드
+                                </a>
+                                <div class="text-xs text-white/60 mt-1">two.dns.onetwohour.com</div>
+                            </div>
+                        </li>
+                        <li class="mt-3">다운로드 후 <strong>설정 → 일반 → VPN 및 기기 관리</strong>로 이동</li>
+                        <li>원하는 프로필을 설치하고 <strong>설정 → 일반 → VPN, DNS 및 기기 관리 → DNS</strong>에서 전환</li>
+                        <li class="mt-2 text-yellow-400">💡 Primary 서버 장애 시 Secondary 프로필로 수동 전환하세요</li>
+                    </ul>
+                </div>
+                <div class="tab-content hidden" id="tab-macos">
+                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                        <li>macOS Big Sur 이상의 버전인지 확인</li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2">🟢 Primary DNS 서버</div>
+                                <a href="./onetdns-one.mobileconfig" class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 underline" target="_blank">
+                                    📥 Primary DNS 프로필 다운로드
+                                </a>
+                                <div class="text-xs text-white/60 mt-1">one.dns.onetwohour.com</div>
+                            </div>
+                        </li>
+                        <li class="mt-2">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-2">🔵 Secondary DNS 서버</div>
+                                <a href="./onetdns-two.mobileconfig" class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 underline" target="_blank">
+                                    📥 Secondary DNS 프로필 다운로드
+                                </a>
+                                <div class="text-xs text-white/60 mt-1">two.dns.onetwohour.com</div>
+                            </div>
+                        </li>
+                        <li class="mt-3">다운로드한 <code>.mobileconfig</code> 파일을 더블 클릭</li>
+                        <li><strong>시스템 설정 → 프로파일</strong>에서 원하는 프로필 <strong>설치</strong> 클릭</li>
+                        <li class="mt-2 text-yellow-400">💡 시스템 설정 → 네트워크 → DNS에서 설치된 프로필 간 전환 가능</li>
+                    </ul>
+                </div>
+                <div class="tab-content hidden" id="tab-adguard">
+                    <ul class="list-disc pl-5 text-white/80 leading-relaxed text-sm">
+                        <li><strong>AdGuard 실행</strong> → <strong>DNS 보호</strong></li>
+                        <li><strong>DNS 서버 선택 화면</strong>에서 <strong>사용자 정의 서버 추가</strong></li>
+                        <li class="mt-3">원하는 서버와 프로토콜을 선택하여 입력:</li>
+                        <li class="mt-3">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-3 flex items-center gap-2">
+                                    🟢 Primary DNS 서버
+                                    <span class="text-xs text-white/60 font-normal">one.dns.onetwohour.com</span>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoH:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="https://one.dns.onetwohour.com/dns-query">
+                                            https://one.dns.onetwohour.com/dns-query
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoT:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="tls://one.dns.onetwohour.com">
+                                            tls://one.dns.onetwohour.com
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoQ:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="quic://one.dns.onetwohour.com">
+                                            quic://one.dns.onetwohour.com
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">HTTP/3:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="h3://one.dns.onetwohour.com/dns-query">
+                                            h3://one.dns.onetwohour.com/dns-query
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mt-3">
+                            <div class="bg-white/5 p-3 rounded-lg">
+                                <div class="font-semibold text-white mb-3 flex items-center gap-2">
+                                    🔵 Secondary DNS 서버
+                                    <span class="text-xs text-white/60 font-normal">two.dns.onetwohour.com</span>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoH:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="https://two.dns.onetwohour.com/dns-query">
+                                            https://two.dns.onetwohour.com/dns-query
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoT:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="tls://two.dns.onetwohour.com">
+                                            tls://two.dns.onetwohour.com
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">DoQ:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="quic://two.dns.onetwohour.com">
+                                            quic://two.dns.onetwohour.com
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-white/70 w-16">HTTP/3:</span>
+                                        <button class="copy-dns text-lime-300 font-mono text-xs hover:text-lime-400 underline flex-1 text-left ml-2" data-copy="h3://two.dns.onetwohour.com/dns-query">
+                                            h3://two.dns.onetwohour.com/dns-query
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <button class="btn no-gradient mt-4" onclick="closePopup()"><span class="content">닫기</span></button>
+            </div>
+        </div>
+        <div style="height: 50vh;"></div>
+    </div>
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white/10 text-white text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        복사됨!
+    </div>
+    <script>
+        const promo = document.getElementById("promo");
+        const guideBtn = document.getElementById("guideBtn");
+        const popupCard = document.getElementById("popupCard");
+        const mainCard = document.getElementById("mainCard");
+        const noticeCard = document.querySelector(".notice-card");
+        const stickyArea = document.querySelector(".sticky-area");
+        const slides = document.querySelectorAll(".slide");
+        const slider = document.getElementById("noticeSlider");
+        const noticeWrapper = document.querySelector(".notice-slider-wrapper");
+        const sections = [
+            "DNS는 도메인 이름을 IP 주소로 변환해 주는<br>인터넷의 전화번호부와 같습니다.",
+            "DNS 보안이 강화되면 중간자 공격과<br>위조 응답을 방지해,<br>개인정보가 안전하게 보호됩니다.",
+            "광고 차단 기능이 내장되어 원치 않는 트래킹과<br>광고 요청을 자동으로 차단합니다.",
+            "시작하세요<br>Onet DNS",
+        ];
+        let isHovering = false;
+        let locked = false;
+        let lockScrollY = Infinity;
+        let noticeToggled = false;
+
+        promo.innerHTML = sections[0];
+        promo.classList.add("visible");
+        let lastSection = 0;
+        let currentIndex = 0;
+
+        let autoPlayTimer = setInterval(() => {
+            slideTo("next");
+        }, 5000);
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const notice = document.querySelector(".notice-card");
+            if (!notice) return;
+
+            if (mainCard && noticeCard) {
+                const mainWidth = mainCard.offsetWidth;
+                const maxWidth = mainWidth * 1.0;
+                noticeCard.style.maxWidth = `${maxWidth}px`;
+            }
+
+            if (mainCard && noticeWrapper) {
+                const cardWidth = mainCard.offsetWidth;
+                noticeWrapper.style.maxWidth = `${cardWidth}px`;
+                noticeWrapper.style.margin = "0 auto 2rem";
+                updateSlides();
+            }
+        });
+
+        window.addEventListener("beforeunload", () => {
+            window.scrollTo(0, 0);
+        });
+
+        function updateWrapperHeight() {
+            const wrapper = document.querySelector('.notice-slider-wrapper');
+            const currentSlide = document.querySelector('.slide.current');
+
+            if (!wrapper || !currentSlide) return;
+
+            const innerContent = currentSlide.querySelector('.text-overlay');
+            if (!innerContent) return;
+
+            const style = getComputedStyle(wrapper);
+            const paddingTop = parseFloat(style.paddingTop);
+            const paddingBottom = parseFloat(style.paddingBottom);
+
+            const contentHeight = innerContent.offsetHeight;
+
+            const totalHeight = contentHeight + paddingTop + paddingBottom;
+
+            wrapper.style.height = `${totalHeight}px`;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const rect = stickyArea.getBoundingClientRect();
+
+                    if (entry.isIntersecting && !locked) {
+                        stickyArea.style.position = "fixed";
+                        stickyArea.style.top = `${rect.top}px`;
+                        stickyArea.style.left = `${rect.left}px`;
+                        stickyArea.style.width = `${rect.width}px`;
+                        stickyArea.style.zIndex = 10;
+
+                        placeholder = document.createElement("div");
+                        placeholder.className = "sticky-placeholder";
+                        placeholder.style.height = `${stickyArea.offsetHeight}px`;
+                        stickyArea.parentNode.insertBefore(placeholder, stickyArea);
+
+                        locked = true;
+                        lockScrollY = window.scrollY;
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0,
+                rootMargin: "0px 0px -50% 0px",
+            }
+        );
+
+        observer.observe(promo);
+
+        window.addEventListener("scroll", () => {
+            if (locked && window.scrollY < lockScrollY - 10) {
+                stickyArea.style.position = "";
+                stickyArea.style.top = "";
+                stickyArea.style.left = "";
+                stickyArea.style.width = "";
+                stickyArea.style.zIndex = "";
+
+                if (placeholder) {
+                    placeholder.remove();
+                    placeholder = null;
+                }
+
+                locked = false;
+                lockScrollY = Infinity;
+            }
+        });
+
+        window.addEventListener("scroll", () => {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const doc = document.documentElement;
+            const totalScrollable = doc.scrollHeight - windowHeight;
+            const scrollRatio = (scrollY - lockScrollY) / (totalScrollable - lockScrollY);
+
+            let idx = scrollRatio < 0.2 || lockScrollY === Infinity ? 0 : scrollRatio < 0.55 ? 1 : scrollRatio < 0.9 ? 2 : 3;
+
+            if (idx !== lastSection) {
+                lastSection = idx;
+                promo.classList.remove("visible");
+                setTimeout(() => {
+                    if (idx === 3) {
+                        promo.classList.add("large");
+                    } else {
+                        promo.classList.remove("large");
+                    }
+                    promo.innerHTML = sections[idx];
+
+                    promo.classList.add("visible");
+                }, 300);
+            }
+
+            const isAtBottom = scrollY + windowHeight >= doc.scrollHeight - 10;
+            mainCard.classList.toggle("hide-after", isAtBottom);
+        });
+
+        guideBtn.addEventListener("click", () => {
+            popupCard.style.display = "flex";
+        });
+
+        function closePopup() {
+            popupCard.style.display = "none";
+        }
+
+        function updateButtonHoverState(clientX, clientY) {
+            const r = guideBtn.getBoundingClientRect();
+            const inside = clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+
+            if (inside && !isHovering) {
+                isHovering = true;
+                guideBtn.classList.add("btn-hovered");
+            } else if (!inside && isHovering) {
+                isHovering = false;
+                guideBtn.classList.remove("btn-hovered");
+            }
+            if (inside) {
+                const x = clientX - r.left;
+                const y = clientY - r.top;
+                guideBtn.style.setProperty("--btn-x", `${x}px`);
+                guideBtn.style.setProperty("--btn-y", `${y}px`);
+            }
+        }
+
+        function updateNoticeHoverState(clientX, clientY) {
+            const r = noticeCard.getBoundingClientRect();
+            const inside = clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+
+            if (inside && !noticeCard.dataset.hovering) {
+                noticeCard.dataset.hovering = "true";
+                noticeCard.classList.add("hovering");
+                clearInterval(autoPlayTimer);
+                autoPlayTimer = null;
+            } else if (!inside && noticeCard.dataset.hovering === "true") {
+                noticeCard.dataset.hovering = "";
+                noticeCard.classList.remove("hovering");
+                autoPlayTimer = setInterval(() => slideTo("next"), 5000);
+            }
+        }
+
+        function updateSlides() {
+            const wrapper = document.querySelector(".notice-slider-wrapper");
+            const slider = document.getElementById("noticeSlider");
+            const slides = document.querySelectorAll(".slide");
+
+            const wrapperW = wrapper.clientWidth;
+            const slideW = slides[0].clientWidth;
+
+            const gap = parseFloat(getComputedStyle(slider).gap) || 0;
+
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle("current", idx === currentIndex);
+                slide.classList.toggle("prev", idx === currentIndex - 1);
+                slide.classList.toggle("next", idx === currentIndex + 1);
+            });
+
+            const centerOffset = (wrapperW - slideW) / 2;
+
+            const offsetX = (slideW + gap) * currentIndex;
+            slider.style.transform = `translateX(${centerOffset - offsetX}px)`;
+            updateWrapperHeight();
+        }
+
+        function slideTo(dir) {
+            if (dir === "next") {
+                currentIndex = (currentIndex + 1) % slides.length;
+            } else if (dir === "prev") {
+                currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            }
+            updateSlides();
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight") slideTo("next");
+            if (e.key === "ArrowLeft") slideTo("prev");
+        });
+
+        let touchStartX = 0;
+        slider.addEventListener("touchstart", (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        slider.addEventListener("touchend", (e) => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (dx > 50) slideTo("prev");
+            else if (dx < -50) slideTo("next");
+        });
+
+        let isMouseDown = false;
+        let mouseStartX = 0;
+
+        slider.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            mouseStartX = e.clientX;
+            slider.style.cursor = 'grabbing';
+        });
+
+        slider.addEventListener('mouseup', (e) => {
+            if (!isMouseDown) return;
+
+            isMouseDown = false;
+            slider.style.cursor = 'grab';
+
+            const mouseEndX = e.clientX;
+            const dx = mouseEndX - mouseStartX;
+
+            if (dx > 50) {
+                slideTo('prev');
+            } else if (dx < -50) {
+                slideTo('next');
+            }
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            if (isMouseDown) {
+                isMouseDown = false;
+                slider.style.cursor = 'grab';
+            }
+        });
+
+        document.addEventListener("pointermove", (e) => {
+            updateButtonHoverState(e.clientX, e.clientY);
+            updateNoticeHoverState(e.clientX, e.clientY);
+        });
+
+        document.addEventListener(
+            "touchmove",
+            (e) => {
+                const t = e.touches[0];
+                updateButtonHoverState(t.clientX, t.clientY);
+                updateNoticeHoverState(t.clientX, t.clientY);
+            }, {
+                passive: true,
+            }
+        );
+
+        const copyButtons = document.querySelectorAll(".btn-copy");
+        const toast = document.getElementById("toast");
+        copyButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const text = btn.dataset.copy;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("복사됨!");
+                });
+            });
+        });
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.remove("opacity-0");
+            toast.classList.add("opacity-100");
+            setTimeout(() => {
+                toast.classList.remove("opacity-100");
+                toast.classList.add("opacity-0");
+            }, 1500);
+        }
+
+        async function checkPing(host, timeout = 5000) {
+            const randomPath = Math.random().toString(36).substring(2);
+            const url = `https://${host}/${randomPath}`;
+
+            const start = performance.now();
+            try {
+                await Promise.race([
+                    fetch(url, {
+                        method: "GET",
+                        mode: "no-cors",
+                        cache: "no-store",
+                    }),
+                    new Promise((_, reject) => setTimeout(reject, timeout, new Error("timeout"))),
+                ]);
+                return {
+                    ok: true,
+                    rtt: performance.now() - start,
+                };
+            } catch (e) {
+                return {
+                    ok: false,
+                    rtt: performance.now() - start,
+                };
+            }
+        }
+
+        async function updatePingStatus(ms, prefix) {
+            const dot = document.getElementById("ping-dot-" + prefix);
+            const text = document.getElementById("ping-state-" + prefix);
+            if (!dot || !text) return;
+
+            if (ms.ok) dot.className = "w-3 h-3 rounded-full bg-green-500";
+            else dot.className = "w-3 h-3 rounded-full bg-red-500";
+
+            text.textContent = ms.ok ? "On" : "Off";
+        }
+
+        const host = ".dns.onetwohour.com";
+
+        async function pingLoop(prefix) {
+            const target = prefix + host;
+            let latency = await checkPing(target);
+            updatePingStatus(latency, prefix);
+
+            setInterval(async () => {
+                let latency = await checkPing(target);
+                updatePingStatus(latency, prefix);
+            }, 1000);
+        }
+
+        ["one", "two"].forEach(pingLoop);
+
+        function updateRollingNumber(el, value, fixed = 1) {
+            const isInt = Number(value) % 1 === 0;
+            const str = isInt ? String(value) : Number(value).toFixed(fixed);
+
+            const chars = [...str];
+            const children = [...el.children];
+
+            if (children.length !== chars.length) {
+                el.innerHTML = "";
+                for (const ch of chars) el.appendChild(createSpan(ch));
+            }
+
+            const digitGroups = el.querySelectorAll(".digit-group");
+            const unit = el.querySelector(".digit-stack span")?.getBoundingClientRect().height || 0;
+
+            let idx = 0;
+            for (const ch of chars) {
+                if (ch === ".") continue;
+                const stack = digitGroups[idx++].firstElementChild;
+                stack.style.transform = `translateY(-${+ch * unit}px)`;
+            }
+        }
+
+        function createSpan(ch) {
+            if (ch === ".") {
+                const dot = document.createElement("span");
+                dot.className = "decimal-dot";
+                dot.textContent = ".";
+                return dot;
+            }
+            const group = document.createElement("span");
+            group.className = "digit-group";
+
+            const stack = document.createElement("span");
+            stack.className = "digit-stack";
+            for (let n = 0; n < 10; n++) {
+                const s = document.createElement("span");
+                s.textContent = n;
+                stack.appendChild(s);
+            }
+            group.appendChild(stack);
+            return group;
+        }
+
+        async function updateDnsStats() {
+            try {
+                const res = await fetch("/.netlify/functions/stats", {
+                    cache: "no-store",
+                });
+                const {
+                    queries,
+                    blocked,
+                    ratio
+                } = await res.json();
+
+                updateRollingNumber(document.getElementById("dns-total"), queries);
+                updateRollingNumber(document.getElementById("dns-blocked"), blocked);
+                updateRollingNumber(document.getElementById("dns-ratio"), ratio, 1);
+            } catch (e) {}
+        }
+        updateDnsStats();
+        setInterval(updateDnsStats, 1000);
+
+        document.addEventListener("touchend", () => {
+            if (noticeCard.classList.contains("hovering")) {
+                noticeCard.dataset.hovering = "";
+                noticeCard.classList.remove("hovering");
+            }
+            if (guideBtn.classList.contains("btn-hovered")) {
+                guideBtn.dataset.hovering = "";
+                guideBtn.classList.remove("btn-hovered");
+            }
+        });
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                document.querySelectorAll(".tab-content").forEach((content) => content.classList.add("hidden"));
+                const targetId = btn.dataset.target;
+                document.getElementById(targetId).classList.remove("hidden");
+            });
+        });
+
+        document.querySelectorAll(".copy-dns").forEach((el) => {
+            el.addEventListener("click", () => {
+                const text = el.dataset.copy;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`복사됨: ${text}`);
+                });
+            });
+        });
+
+        window.addEventListener("resize", () => {
+            updateSlides();
+        });
+    </script>
+    <div class="footer mt-16 mb-10 text-center text-white/70 text-sm leading-relaxed">
+        <p>👤 만든이: <span class="font-semibold">onetwohour</span></p>
+        <p>✉️ 이메일: <a href="mailto:mail@onetwohour.com" class="underline hover:text-lime-300">mail@onetwohour.com</a></p>
+        <p>🌐 GitHub: <a href="https://github.com/onetwohour/onetdns" target="_blank" class="underline hover:text-lime-300">github.com/onetwohour/onetdns</a></p>
+        <p class="mt-2 text-xs text-white/30">© 2025 Onet DNS. 모든 권리 보유.</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>DNSSettings</key>
+      <dict>
+        <key>DNSProtocol</key>
+        <string>TLS</string>
+        <key>ServerAddresses</key>
+        <array>
+          <string>15.165.111.52</string>
+        </array>
+        <key>ServerName</key>
+        <string>two.dns.onetwohour.com</string>
+      </dict>
+      <key>PayloadIdentifier</key>
+      <string>com.onetdns.secondary</string>
+      <key>PayloadType</key>
+      <string>com.apple.dnsSettings.managed</string>
+      <key>PayloadUUID</key>
+      <string>545780e6-c93e-4752-99ba-42bd12863384</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+    </dict>
+  </array>
+  <key>PayloadDisplayName</key>
+  <string>Onet DNS Secondary</string>
+  <key>PayloadDescription</key>
+  <string>광고 차단, 암호화, Privacy-First 정책이 적용된 Onet DNS</string>
+  <key>PayloadIdentifier</key>
+  <string>com.onetdns.secondary.profile</string>
+  <key>PayloadOrganization</key>
+  <string>OnetDNS</string>
+  <key>PayloadRemovalDisallowed</key>
+  <false/>
+  <key>PayloadType</key>
+  <string>Configuration</string>
+  <key>PayloadUUID</key>
+  <string>73a71222-7865-404d-965f-db6d112db221</string>
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+</dict>
+</plist>
