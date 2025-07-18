@@ -1,0 +1,119 @@
+name: DNS Trust Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  dns_trust:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install kdig
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y knot-dnsutils
+
+      - name: Check DNSSEC
+        continue-on-error: true
+        run: |
+          servers=("3.39.126.146" "15.165.111.52")
+          server_names=("Primary" "Secondary")
+          
+          for i in "${!servers[@]}"; do
+            server="${servers[$i]}"
+            name="${server_names[$i]}"
+            echo "Checking DNSSEC on $name server ($server)"
+            
+            if kdig +dnssec @$server example.com | grep -q 'Flags:.* ad'; then
+              echo "🔒 DNSSEC on $name ($server): PASS"
+            else
+              echo "🚨 DNSSEC on $name ($server): FAIL"
+              touch /tmp/dns_failed
+            fi
+          done
+
+      - name: Check DNS over HTTPS (DoH)
+        continue-on-error: true
+        run: |
+          urls=("https://one.dns.onetwohour.com/dns-query" "https://two.dns.onetwohour.com/dns-query")
+          hosts=("one.dns.onetwohour.com" "two.dns.onetwohour.com")
+          server_names=("Primary" "Secondary")
+      
+          for i in "${!urls[@]}"; do
+            url="${urls[$i]}"
+            host="${hosts[$i]}"
+            name="${server_names[$i]}"
+      
+            echo "Checking DoH on $name server ($url)"
+            
+            if kdig @${host} +https=${url} example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoH on $name ($url): PASS"
+            else
+              echo "🚨 DoH on $name ($url): FAIL"
+              touch /tmp/dns_failed
+            fi
+          done
+          
+      - name: Check DNS over TLS (DoT)
+        continue-on-error: true
+        run: |
+          servers=("3.39.126.146" "15.165.111.52")
+          server_names=("Primary" "Secondary")
+          
+          for i in "${!servers[@]}"; do
+            server="${servers[$i]}"
+            name="${server_names[$i]}"
+            echo "Checking DoT on $name server ($server)"
+            
+            if kdig +tls @$server -p 853 example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoT on $name ($server): PASS"
+            else
+              echo "🚨 DoT on $name ($server): FAIL"
+              touch /tmp/dns_failed
+            fi
+          done
+          
+      - name: Check DNS over QUIC (DoQ)
+        continue-on-error: true
+        run: |
+          servers=("3.39.126.146" "15.165.111.52")
+          server_names=("Primary" "Secondary")
+          
+          for i in "${!servers[@]}"; do
+            server="${servers[$i]}"
+            name="${server_names[$i]}"
+            echo "Checking DoQ on $name server ($server)"
+            
+            if kdig +quic @$server -p 853 example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoQ on $name ($server): PASS"
+            else
+              echo "🚨 DoQ on $name ($server): FAIL"
+              touch /tmp/dns_failed
+            fi
+          done
+
+      - name: Summary Report
+        if: always()
+        run: |
+          echo "=================================="
+          echo "📊 DNS Trust Check Summary"
+          echo "=================================="
+          echo "✅ Primary DNS: 3.39.126.146 (one.dns.onetwohour.com)"
+          echo "✅ Secondary DNS: 15.165.111.52 (two.dns.onetwohour.com)"
+          echo ""
+          echo "🔍 Tested Protocols:"
+          echo "  • DNSSEC (DNS Security Extensions)"
+          echo "  • DoH (DNS over HTTPS)"
+          echo "  • DoT (DNS over TLS)"
+          echo "  • DoQ (DNS over QUIC)"
+          echo ""
+          echo "📅 Check completed at: $(date)"
+
+          if [ -f /tmp/dns_failed ]; then
+            echo "❌ One or more checks failed"
+            exit 1
+          else
+            echo "✅ All checks passed"
+          fi
