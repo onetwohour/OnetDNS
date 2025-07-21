@@ -15,6 +15,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y knot-dnsutils
 
+      - name: Warm-up DNS Query
+        run: |
+          servers=("3.39.126.146" "15.165.111.52")
+          server_names=("Primary" "Secondary")
+          
+          for i in "${!servers[@]}"; do
+            server="${servers[$i]}"
+            name="${server_names[$i]}"
+            echo "Warming up $name server ($server) with standard A query"
+            
+            if kdig @$server example.com +short > /dev/null 2>&1; then
+              echo "✅ Warm-up query to $name ($server): SUCCESS"
+            else
+              echo "⚠️ Warm-up query to $name ($server): FAILED"
+            fi
+          done
+
       - name: Check DNSSEC
         continue-on-error: true
         run: |
