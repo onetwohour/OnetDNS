@@ -3,7 +3,7 @@ name: DNS Trust Check
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 15 * * *'
 
 jobs:
   dns_trust:
