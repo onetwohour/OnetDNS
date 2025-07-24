@@ -87,7 +87,7 @@ iOS 14+ 및 macOS Big Sur+ 지원:
 - **대체 DNS**: `15.165.111.52`
 - **기본 설정 DNS 암호화**: `HTTPS를 통한 DNS(수동)` 선택
 - **대체 DNS 암호화**: `HTTPS를 통한 DNS(수동)` 선택
-- **HTTPS 템플릿을 통한 암호화**: 각 IP에 맞는 도메인을 입력
+- **HTTPS 템플릿을 통한 암호화**: 각각 `https://one.dns.onetwohour.com/dns-query`, `https://two.dns.onetwohour.com/dns-query` 입력
 
 **2. 레거시 IP 주소 설정**
 **제어판** → **네트워크 및 인터넷** → **네트워크 및 공유 센터** → **어댑터 설정 변경**
