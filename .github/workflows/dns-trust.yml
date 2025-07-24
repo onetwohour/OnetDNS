@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: Install kdig
         run: |
-          sudo sed -i 's|http://.*.ubuntu.com|http://mirror.kakao.com|g' /etc/apt/sources.list
           if ! sudo apt-get install -y knot-dnsutils; then
             echo "Retrying with update..."
             sudo apt-get update
