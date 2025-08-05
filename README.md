@@ -58,7 +58,7 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 | DoQ | `quic://two.dns.onetwohour.com` | 853 | QUIC |
 | DoH3 | `h3://two.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
 
-> **💡 권장사항**  
+> **권장사항**  
 > 가능하다면 Primary 서버와 Secondary 서버를 동시에 사용하세요.
 
 ---
