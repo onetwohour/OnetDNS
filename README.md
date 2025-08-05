@@ -8,10 +8,10 @@ DNSSEC, DoT, DoH, DoH3(HTTP/3), DoQ까지 지원하며 **Privacy-first 정책**�
 ## 신뢰성 자동 검증
 OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주요 DNS 보안 기능을 **매일 자동 점검**합니다.
 
-- 🔒 **DNSSEC**: `example.com` 도메인을 기준으로 서명된 응답의 유효성(DNSSEC 검증 성공 여부)을 확인합니다.
-- 🔒 **DNS over HTTPS**: RFC 8484에 따라 HTTP POST 방식으로 DoH 엔드포인트의 응답을 확인합니다.
-- 🔒 **DNS over TLS**: TCP 853 포트를 통해 TLS 기반 암호화 DNS 연결이 가능한지 검사합니다.
-- 🔒 **DNS over QUIC**: UDP 853 포트를 통한 QUIC 기반 DNS 연결이 정상 작동하는지 점검합니다.
+- **DNSSEC**: `example.com` 도메인을 기준으로 서명된 응답의 유효성(DNSSEC 검증 성공 여부)을 확인합니다.
+- **DNS over HTTPS**: RFC 8484에 따라 HTTP POST 방식으로 DoH 엔드포인트의 응답을 확인합니다.
+- **DNS over TLS**: TCP 853 포트를 통해 TLS 기반 암호화 DNS 연결이 가능한지 검사합니다.
+- **DNS over QUIC**: UDP 853 포트를 통한 QUIC 기반 DNS 연결이 정상 작동하는지 점검합니다.
 
 [![DNS Trust Check](https://github.com/onetwohour/OnetDNS/actions/workflows/dns-trust.yml/badge.svg)](https://github.com/onetwohour/OnetDNS/actions/workflows/dns-trust.yml)
 
@@ -29,18 +29,18 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 ## 주요 특징
 | 기능 | 설명 |
 |------|------|
-| 🔒 **DNSSEC** | 레코드 위·변조 방지 |
-| 🕵️ **Privacy-first 정책** | 개인 식별이 가능한 DNS 질의 내용 미저장 |
-| 🚀 **광고 차단** | 광고 및 트래커 차단 |
-| 🌐 **다중 전송 프로토콜** | *DoH*, *DoT*, *DoQ*, *DoH3* 지원 |
-| ⚡ **이중화 구성** | Primary/Secondary 서버로 안정성 확보 |
-| 🎯 **독립적 운영** | 타사 업스트림(Google, Cloudflare 등)을 경유하지 않고 직접 질의 |
+| **DNSSEC** | 레코드 위·변조 방지 |
+| **Privacy-first 정책** | 개인 식별이 가능한 DNS 질의 내용 미저장 |
+| **광고 차단** | 광고 및 트래커 차단 |
+| **다중 전송 프로토콜** | *DoH*, *DoT*, *DoQ*, *DoH3* 지원 |
+| **이중화 구성** | Primary/Secondary 서버로 안정성 확보 |
+| **독립적 운영** | 타사 업스트림(Google, Cloudflare 등)을 경유하지 않고 직접 질의 |
 
 ---
 
 ## 엔드포인트
 
-### 🟢 Primary DNS 서버
+### Primary DNS 서버
 | 프로토콜 | 주소 | 포트 | 참고 |
 |----------|------|------|------|
 | UDP/TCP | `3.39.126.146` | 53 | 레거시 DNS |
@@ -49,7 +49,7 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 | DoQ | `quic://one.dns.onetwohour.com` | 853 | QUIC |
 | DoH3 | `h3://one.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
 
-### 🔵 Secondary DNS 서버
+### Secondary DNS 서버
 | 프로토콜 | 주소 | 포트 | 참고 |
 |----------|------|------|------|
 | UDP/TCP | `15.165.111.52` | 53 | 레거시 DNS |
@@ -65,19 +65,19 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 
 ## 플랫폼별 설정 가이드
 
-### 📱 Android
+### Android
 **설정** → **연결** → **기타 연결 설정** → **프라이빗 DNS**에서 다음 중 하나 입력:
 - `one.dns.onetwohour.com` (Primary)
 - `two.dns.onetwohour.com` (Secondary)
 
-### 🍎 iOS/macOS
+### iOS/macOS
 iOS 14+ 및 macOS Big Sur+ 지원:
 - [Primary DNS 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-one.mobileconfig)
 - [Secondary DNS 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-two.mobileconfig)
 
 **설치 방법**: Safari에서 프로필 다운로드 → 설정 → 일반 → VPN 및 기기 관리 → 프로필 설치
 
-### 🪟 Windows
+### Windows
 
 **1. 암호화된 DNS (DoH) 설정 (Windows 11 권장)**
 **설정** → **네트워크 및 인터넷** → **Wi-Fi** 또는 **이더넷** → **하드웨어 속성**으로 이동 후 **DNS 서버 할당** 옆의 **[편집]** 버튼을 클릭하세요.
@@ -94,7 +94,7 @@ iOS 14+ 및 macOS Big Sur+ 지원:
 - 기본 설정 DNS: `3.39.126.146`
 - 보조 DNS: `15.165.111.52`
 
-### 🛡️ AdGuard
+### AdGuard
 **DNS 보호** → **사용자 정의 서버 추가**에서 원하는 프로토콜 입력:
 - DoH: `https://one.dns.onetwohour.com/dns-query`
 - DoT: `tls://one.dns.onetwohour.com`
@@ -139,7 +139,7 @@ OnetDNS는 필요에 따라 유동적으로 필터를 추가하거나 제거할 
 
 ---
 
-## 📞 문의 및 지원
+## 문의 및 지원
 
 - **이메일**: [mail@onetwohour.com](mailto:mail@onetwohour.com)
 - **Discord**: [https://discord.gg/gp3w9w7XXj](https://discord.gg/gp3w9w7XXj)
