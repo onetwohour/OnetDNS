@@ -23,8 +23,12 @@
         background-size: cover;
         background-position: center;
         position: relative;
-        clip-path: ellipse(120% 100% at 50% 0%);
-        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+        -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
+        mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
+        mask-mode: alpha;
+        mask-repeat: no-repeat;
+        mask-size: 100% 100%;
+        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, .3);
       }
 
       body {
@@ -111,21 +115,6 @@
         background-position: center;
         background-repeat: no-repeat;
         transition: opacity 1s ease-in-out;
-      }
-
-      #bg-low {
-        background-image: linear-gradient(to bottom, rgba(15 23 42 / .1) 40%, #0f172a 95%), url("./background_q75.webp");
-        z-index: 1;
-      }
-
-      #bg-mid {
-        background-image: linear-gradient(to bottom, rgba(15 23 42 / .1) 40%, #0f172a 95%), url("./background_q85.webp");
-        z-index: 2;
-      }
-
-      #bg-full {
-        background-image: linear-gradient(to bottom, rgba(15 23 42 / .1) 40%, #0f172a 95%), url("./background.webp");
-        z-index: 3;
       }
     </style>
   </head>
