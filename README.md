@@ -1,4 +1,4 @@
-# OnetDNS
+# <img src="./assets/favicon.png" width="28" style="vertical-align:middle" /> OnetDNS
 
 안전하고 **광고-추적 없는** 인터넷 경험을 위해 설계된 무료 공개 DNS 서비스입니다.  
 DNSSEC, DoT, DoH, DoH3(HTTP/3), DoQ까지 지원하며 **Privacy-first 정책**을 지향합니다.
