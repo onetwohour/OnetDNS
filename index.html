@@ -31,11 +31,22 @@
         box-shadow: 0 10px 30px -15px rgba(0, 0, 0, .3);
       }
 
+      body, body * {
+        -webkit-user-select: none !important;
+        -moz-user-select: -moz-none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+      }
+
+      img, a, svg {
+        -webkit-user-drag: none;
+      }
+
       body {
         font-family: "Pretendard Variable", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        user-select: none;
       }
 
       ::-webkit-scrollbar {
