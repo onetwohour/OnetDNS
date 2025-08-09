@@ -204,7 +204,7 @@
             <div class="space-y-4">
               <div class="flex items-center justify-between bg-slate-800 p-4 rounded-lg">
                 <div>
-                  <p class="text-sm text-slate-400">Primary DNS (IPv4)</p>
+                  <p class="text-sm text-slate-400">DNS Node 1 (IPv4)</p>
                   <p class="text-xl font-mono text-emerald-400">3.39.126.146</p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -221,7 +221,7 @@
               </div>
               <div class="flex items-center justify-between bg-slate-800 p-4 rounded-lg">
                 <div>
-                  <p class="text-sm text-slate-400">Secondary DNS (IPv4)</p>
+                  <p class="text-sm text-slate-400">DNS Node 2 (IPv4)</p>
                   <p class="text-xl font-mono text-emerald-400">15.165.111.52</p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -311,13 +311,13 @@
                   <strong>설정</strong> → 연결 → 기타 연결 설정 → <strong>프라이빗 DNS</strong>로 이동합니다.
                 </li>
                 <li>'프라이빗 DNS 공급자 호스트 이름'을 선택하고 아래 주소 중 하나를 입력하세요.</li>
-                <li class="bg-slate-800 p-3 rounded-lg">
-                  <p class="font-semibold text-white mb-1">🟢 Primary: <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="one.dns.onetwohour.com">one.dns.onetwohour.com</code>
-                  </p>
+                <li class="bg-slate-800 p-3 rounded-lg flex">
+                  <p class="font-semibold text-slate-400 mb-1 w-24 shrink-0">DNS Node 1:</p>
+                  <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="one.dns.onetwohour.com">one.dns.onetwohour.com</code>
                 </li>
-                <li class="bg-slate-800 p-3 rounded-lg">
-                  <p class="font-semibold text-white mb-1">🔵 Secondary: <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="two.dns.onetwohour.com">two.dns.onetwohour.com</code>
-                  </p>
+                <li class="bg-slate-800 p-3 rounded-lg flex">
+                  <p class="font-semibold text-slate-400 mb-1 w-24 shrink-0">DNS Node 2:</p>
+                  <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="two.dns.onetwohour.com">two.dns.onetwohour.com</code>
                 </li>
               </ul>
             </div>
@@ -343,10 +343,10 @@
                     </ol>
                     <div class="bg-slate-900 p-4 rounded-lg space-y-4">
                       <div>
-                        <h4 class="font-semibold text-white mb-2">🟢 Primary 서버</h4>
+                        <h4 class="font-semibold text-white mb-2">DNS Node 1</h4>
                         <div class="space-y-2">
                           <div class="flex items-center">
-                            <span class="w-32 text-slate-400 shrink-0">기본 DNS:</span>
+                            <span class="w-32 text-slate-400 shrink-0">IPv4:</span>
                             <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="3.39.126.146">3.39.126.146</code>
                           </div>
                           <div class="flex items-start">
@@ -356,10 +356,10 @@
                         </div>
                       </div>
                       <div>
-                        <h4 class="font-semibold text-white mb-2">🔵 Secondary 서버</h4>
+                        <h4 class="font-semibold text-white mb-2">DNS Node 2</h4>
                         <div class="space-y-2">
                           <div class="flex items-center">
-                            <span class="w-32 text-slate-400 shrink-0">대체 DNS:</span>
+                            <span class="w-32 text-slate-400 shrink-0">IPv4:</span>
                             <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="15.165.111.52">15.165.111.52</code>
                           </div>
                           <div class="flex items-start">
@@ -391,11 +391,11 @@
                     </ol>
                     <div class="bg-slate-900 p-4 rounded-lg space-y-2">
                       <div class="flex items-center">
-                        <span class="w-32 text-slate-400 shrink-0">🟢 기본 설정 DNS:</span>
+                        <span class="w-32 text-slate-400 shrink-0">DNS Node 1:</span>
                         <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="3.39.126.146">3.39.126.146</code>
                       </div>
                       <div class="flex items-center">
-                        <span class="w-32 text-slate-400 shrink-0">🔵 보조 DNS:</span>
+                        <span class="w-32 text-slate-400 shrink-0">DNS Node 2:</span>
                         <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="15.165.111.52">15.165.111.52</code>
                       </div>
                     </div>
@@ -407,10 +407,10 @@
               <ul class="space-y-3 text-slate-300 text-sm">
                 <li>iOS 14 이상에서 아래 프로필을 다운로드하여 설치하세요.</li>
                 <li class="bg-slate-800 p-3 rounded-lg">
-                  <a href="./onetdns-one.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">📥 Primary DNS 프로필 다운로드</a>
+                  <a href="./onetdns-one.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">DNS Node 1 프로필 다운로드</a>
                 </li>
                 <li class="bg-slate-800 p-3 rounded-lg">
-                  <a href="./onetdns-two.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">📥 Secondary DNS 프로필 다운로드</a>
+                  <a href="./onetdns-two.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">DNS Node 2 프로필 다운로드</a>
                 </li>
                 <li>
                   <strong>설정 → 일반 → VPN 및 기기 관리</strong>에서 설치된 프로필을 활성화합니다.
@@ -421,10 +421,10 @@
               <ul class="space-y-3 text-slate-300 text-sm">
                 <li>macOS Big Sur 이상에서 아래 프로필을 다운로드하여 설치하세요.</li>
                 <li class="bg-slate-800 p-3 rounded-lg">
-                  <a href="./onetdns-one.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">📥 Primary DNS 프로필 다운로드</a>
+                  <a href="./onetdns-one.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">DNS Node 1 프로필 다운로드</a>
                 </li>
                 <li class="bg-slate-800 p-3 rounded-lg">
-                  <a href="./onetdns-two.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">📥 Secondary DNS 프로필 다운로드</a>
+                  <a href="./onetdns-two.mobileconfig" class="font-semibold text-sky-400 hover:underline" target="_blank">DNS Node 2 프로필 다운로드</a>
                 </li>
                 <li>
                   <strong>시스템 설정 → 프로파일</strong>에서 설치된 프로필을 활성화합니다.
@@ -439,7 +439,7 @@
                 <li>아래 주소 중 원하는 프로토콜의 주소를 복사하여 추가하세요.</li>
                 <li class="bg-slate-800 p-4 rounded-lg space-y-4">
                   <div>
-                    <h4 class="font-semibold text-white mb-2">🟢 Primary 서버 ( <code class="text-sm font-normal text-slate-400">one.dns.onetwohour.com</code>) </h4>
+                    <h4 class="font-semibold text-white mb-2">DNS Node 1 ( <code class="text-sm font-normal text-slate-400">one.dns.onetwohour.com</code>) </h4>
                     <div class="space-y-2 pl-2">
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoH:</span>
@@ -460,7 +460,7 @@
                     </div>
                   </div>
                   <div>
-                    <h4 class="font-semibold text-white mb-2">🔵 Secondary 서버 ( <code class="text-sm font-normal text-slate-400">two.dns.onetwohour.com</code>) </h4>
+                    <h4 class="font-semibold text-white mb-2">DNS Node 2 ( <code class="text-sm font-normal text-slate-400">two.dns.onetwohour.com</code>) </h4>
                     <div class="space-y-2 pl-2">
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoH:</span>
@@ -572,7 +572,7 @@
             el.classList.remove('bg-slate-700', 'hover:bg-slate-600');
             el.disabled = true;
           } else if (el.tagName === 'CODE') {
-            el.classList.add('text-green-400');
+            el.classList.add('text-sky-400');
             el.classList.remove('text-emerald-400');
           }
           setTimeout(() => {
