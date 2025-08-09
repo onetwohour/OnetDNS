@@ -33,14 +33,14 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 | **Privacy-first 정책** | 개인 식별이 가능한 DNS 질의 내용 미저장 |
 | **광고 차단** | 광고 및 트래커 차단 |
 | **다중 전송 프로토콜** | *DoH*, *DoT*, *DoQ*, *DoH3* 지원 |
-| **이중화 구성** | Primary/Secondary 서버로 안정성 확보 |
+| **이중화 구성** | Node 1/Node 2 서버로 안정성 확보 |
 | **독립적 운영** | 타사 업스트림(Google, Cloudflare 등)을 경유하지 않고 직접 질의 |
 
 ---
 
 ## 엔드포인트
 
-### Primary DNS 서버
+### DNS Node 1 서버
 | 프로토콜 | 주소 | 포트 | 참고 |
 |----------|------|------|------|
 | UDP/TCP | `3.39.126.146` | 53 | 레거시 DNS |
@@ -49,7 +49,7 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 | DoQ | `quic://one.dns.onetwohour.com` | 853 | QUIC |
 | DoH3 | `h3://one.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
 
-### Secondary DNS 서버
+### DNS Node 2 서버
 | 프로토콜 | 주소 | 포트 | 참고 |
 |----------|------|------|------|
 | UDP/TCP | `15.165.111.52` | 53 | 레거시 DNS |
@@ -58,22 +58,19 @@ OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주�
 | DoQ | `quic://two.dns.onetwohour.com` | 853 | QUIC |
 | DoH3 | `h3://two.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
 
-> **권장사항**  
-> 가능하다면 Primary 서버와 Secondary 서버를 동시에 사용하세요.
-
 ---
 
 ## 플랫폼별 설정 가이드
 
 ### Android
 **설정** → **연결** → **기타 연결 설정** → **프라이빗 DNS**에서 다음 중 하나 입력:
-- `one.dns.onetwohour.com` (Primary)
-- `two.dns.onetwohour.com` (Secondary)
+- `one.dns.onetwohour.com` (Node 1)
+- `two.dns.onetwohour.com` (Node 2)
 
 ### iOS/macOS
 iOS 14+ 및 macOS Big Sur+ 지원:
-- [Primary DNS 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-one.mobileconfig)
-- [Secondary DNS 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-two.mobileconfig)
+- [DNS Node 1 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-one.mobileconfig)
+- [DNS Node 2 프로필 다운로드](https://onetdns.onetwohour.com/onetdns-two.mobileconfig)
 
 **설치 방법**: Safari에서 프로필 다운로드 → 설정 → 일반 → VPN 및 기기 관리 → 프로필 설치
 
@@ -94,12 +91,14 @@ iOS 14+ 및 macOS Big Sur+ 지원:
 - 기본 설정 DNS: `3.39.126.146`
 - 보조 DNS: `15.165.111.52`
 
+> 기본 설정 DNS와 보조 DNS의 주소를 바꾸어 작성해도 동일하게 동작합니다.
+
 ### AdGuard
 **DNS 보호** → **사용자 정의 서버 추가**에서 원하는 프로토콜 입력:
-- DoH: `https://one.dns.onetwohour.com/dns-query`
-- DoT: `tls://one.dns.onetwohour.com`
-- DoQ: `quic://one.dns.onetwohour.com`
-- H3: `h3://one.dns.onetwohour.com/dns-query`
+- DoH: `https://one.dns.onetwohour.com/dns-query`, `https://two.dns.onetwohour.com/dns-query`
+- DoT: `tls://one.dns.onetwohour.com`, `tls://two.dns.onetwohour.com`
+- DoQ: `quic://one.dns.onetwohour.com`, `quic://two.dns.onetwohour.com`
+- H3: `h3://one.dns.onetwohour.com/dns-query`, `h3://two.dns.onetwohour.com/dns-query`
 
 ---
 
@@ -121,9 +120,9 @@ OnetDNS는 사용자의 프라이버시를 최우선으로 합니다. "어떤 �
 
 누구나 자유롭게 사용할 수 있지만, **SLA를 보장하지는 않습니다.**
 
-### ❓ Primary와 Secondary 서버의 차이점은?
+### ❓ Node 1과 Node 2 서버의 차이점은?
 
-두 서버는 **동일한 기능**을 제공하는 서버입니다. Primary 서버 장애 시 Secondary 서버로 전환하여 서비스 연속성을 확보할 수 있습니다.
+두 서버는 **동일한 기능**을 제공하는 서버입니다. Node 1 서버 장애 시 Node 2 서버로 전환하여 서비스 연속성을 확보할 수 있습니다.
 
 ### ❓ 다른 DNS 서버를 경유하지 않는다는 것이 무엇을 의미하나요?
 
