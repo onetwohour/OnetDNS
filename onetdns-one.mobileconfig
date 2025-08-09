@@ -18,7 +18,7 @@
         <string>one.dns.onetwohour.com</string>
       </dict>
       <key>PayloadIdentifier</key>
-      <string>com.onetdns.primary</string>
+      <string>com.onetdns.node1</string>
       <key>PayloadType</key>
       <string>com.apple.dnsSettings.managed</string>
       <key>PayloadUUID</key>
@@ -28,11 +28,11 @@
     </dict>
   </array>
   <key>PayloadDisplayName</key>
-  <string>Onet DNS Primary</string>
+  <string>Onet DNS Node 1</string>
   <key>PayloadDescription</key>
   <string>광고 차단, 암호화, Privacy-First 정책이 적용된 Onet DNS</string>
   <key>PayloadIdentifier</key>
-  <string>com.onetdns.primary.profile</string>
+  <string>com.onetdns.node1.profile</string>
   <key>PayloadOrganization</key>
   <string>OnetDNS</string>
   <key>PayloadRemovalDisallowed</key>
