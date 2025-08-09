@@ -6,7 +6,7 @@ DNSSEC, DoT, DoH, DoH3(HTTP/3), DoQ까지 지원하며 **Privacy-first 정책**�
 ---
 
 ## 신뢰성 자동 검증
-OnetDNS는 GitHub Actions를 통해 **Primary와 Secondary 두 서버의** 주요 DNS 보안 기능을 **매일 자동 점검**합니다.
+OnetDNS는 GitHub Actions를 통해 **Node 1과 Node 2 두 서버의** 주요 DNS 보안 기능을 **매일 자동 점검**합니다.
 
 - **DNSSEC**: `example.com` 도메인을 기준으로 서명된 응답의 유효성(DNSSEC 검증 성공 여부)을 확인합니다.
 - **DNS over HTTPS**: RFC 8484에 따라 HTTP POST 방식으로 DoH 엔드포인트의 응답을 확인합니다.
