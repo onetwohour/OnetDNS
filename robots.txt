@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://onetdns.onetwohour.com/sitemap.xml
