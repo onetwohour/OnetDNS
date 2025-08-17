@@ -312,12 +312,6 @@
                   </svg>
                 </button>
               </div>
-              <div id="status-details" class="text-sm text-slate-400 px-2 space-y-1 hidden">
-                <p>내 IP: <span id="user-ip" class="font-mono text-slate-300">...</span>
-                </p>
-                <p>DNS Resolver: <span id="resolver-ip" class="font-mono text-slate-300">...</span>
-                </p>
-              </div>
               <div id="status-guide" class="text-sm text-center pt-2 hidden">
                 <p>Onet DNS가 설정되지 않았습니다. <a href="#" onclick="openPopup(); return false;" class="text-sky-400 hover:underline font-bold">설정 가이드</a>를 확인해 주세요. </p>
               </div>
@@ -623,10 +617,8 @@
       let slideInterval;
       const slides = noticeSlider.children;
       const totalSlides = slides.length;
-      const ctrlWrap = document.getElementById('sliderCtrls');
       const statusDot = document.getElementById('status-dot');
       const statusText = document.getElementById('status-text');
-      const statusDetails = document.getElementById('status-details');
       const statusGuide = document.getElementById('status-guide');
       const recheckBtn = document.getElementById('recheck-btn');
 
@@ -642,7 +634,6 @@
         statusDot.className = 'w-4 h-4 rounded-full bg-yellow-500 transition-colors animate-pulse';
         statusText.textContent = '확인 중...';
         statusText.className = 'text-lg font-bold text-yellow-400';
-        statusDetails.classList.add('hidden');
         statusGuide.classList.add('hidden');
         const randomString = generateRandomString(32);
         const verificationHost = `${randomString}.t.e.s.t.onetwohour.com`;
@@ -675,10 +666,8 @@
           statusText.className = 'text-lg font-bold text-green-400';
         } else {
           statusDot.className = 'w-4 h-4 rounded-full bg-red-500 transition-colors';
-          statusText.textContent = 'Onet DNS 미사용 또는 오류';
+          statusText.textContent = 'Onet DNS 미사용';
           statusText.className = 'text-lg font-bold text-red-400';
-          statusDetails.textContent = errorDetails;
-          statusDetails.classList.remove('hidden');
           statusGuide.classList.remove('hidden');
         }
       }
