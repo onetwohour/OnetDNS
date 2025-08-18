@@ -628,18 +628,9 @@
             const data = await response.json();
             if (data && data.dns === 'dns.onetwohour.com') {
               isUsingOnetDns = true;
-            } else {
-              isUsingOnetDns = false;
-              errorDetails = '예상치 못한 응답이 수신되었습니다.';
             }
-          } else {
-            isUsingOnetDns = false;
-            errorDetails = `서버 오류: ${response.status}`;
           }
-        } catch (e) {
-          isUsingOnetDns = false;
-          errorDetails = '서버에 연결할 수 없습니다.';
-        }
+        } catch (e) { }
         statusDot.classList.remove('animate-pulse');
         if (isUsingOnetDns) {
           statusDot.className = 'w-4 h-4 rounded-full bg-green-500 transition-colors';
