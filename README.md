@@ -1,7 +1,7 @@
 # <img src="./assets/favicon.png" width="28" style="vertical-align:middle" /> OnetDNS
 
 안전하고 **광고-추적 없는** 인터넷 경험을 위해 설계된 무료 공개 DNS 서비스입니다.  
-DNSSEC, DoT, DoH, DoH3(HTTP/3), DoQ까지 지원하며 **Privacy-first 정책**을 지향합니다.
+DNSSEC, DoT, DoH, DoH3(HTTP/3), DoQ, DNSCrypt까지 지원하며 **Privacy-first 정책**을 지향합니다.
 
 ---
 
@@ -41,22 +41,24 @@ OnetDNS는 GitHub Actions를 통해 **Node 1과 Node 2 두 서버의** 주요 DN
 ## 엔드포인트
 
 ### DNS Node 1 서버
-| 프로토콜 | 주소 | 포트 | 참고 |
-|----------|------|------|------|
-| UDP/TCP | `3.39.126.146` | 53 | 레거시 DNS |
-| DoH | `https://one.dns.onetwohour.com/dns-query` | 443 | HTTPS |
-| DoT | `tls://one.dns.onetwohour.com` | 853 | TLS 1.3 |
-| DoQ | `quic://one.dns.onetwohour.com` | 853 | QUIC |
-| DoH3 | `h3://one.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
+| 프로토콜 | 주소 | 참고 |
+|----------|------|------|
+| UDP/TCP | `3.39.126.146` | 레거시 DNS |
+| DoH | `https://one.dns.onetwohour.com/dns-query` | HTTPS |
+| DoT | `tls://one.dns.onetwohour.com` | TLS 1.3 |
+| DoQ | `quic://one.dns.onetwohour.com` | QUIC |
+| DoH3 | `h3://one.dns.onetwohour.com/dns-query` | HTTP/3 (QUIC) |
+| DNSCrypt | `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t` | DNSCrypt |
 
 ### DNS Node 2 서버
-| 프로토콜 | 주소 | 포트 | 참고 |
-|----------|------|------|------|
-| UDP/TCP | `15.165.111.52` | 53 | 레거시 DNS |
-| DoH | `https://two.dns.onetwohour.com/dns-query` | 443 | HTTPS |
-| DoT | `tls://two.dns.onetwohour.com` | 853 | TLS 1.3 |
-| DoQ | `quic://two.dns.onetwohour.com` | 853 | QUIC |
-| DoH3 | `h3://two.dns.onetwohour.com/dns-query` | 443 | HTTP/3 (QUIC) |
+| 프로토콜 | 주소 | 참고 |
+|----------|------|------|
+| UDP/TCP | `15.165.111.52` | 레거시 DNS |
+| DoH | `https://two.dns.onetwohour.com/dns-query` |HTTPS |
+| DoT | `tls://two.dns.onetwohour.com` | TLS 1.3 |
+| DoQ | `quic://two.dns.onetwohour.com` | QUIC |
+| DoH3 | `h3://two.dns.onetwohour.com/dns-query` | HTTP/3 (QUIC) |
+| DNSCrypt | `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ` | DNSCrypt |
 
 ---
 
@@ -99,6 +101,7 @@ iOS 14+ 및 macOS Big Sur+ 지원:
 - DoT: `tls://one.dns.onetwohour.com`, `tls://two.dns.onetwohour.com`
 - DoQ: `quic://one.dns.onetwohour.com`, `quic://two.dns.onetwohour.com`
 - H3: `h3://one.dns.onetwohour.com/dns-query`, `h3://two.dns.onetwohour.com/dns-query`
+- DNSCrypt: `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t`, `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ`
 
 ---
 
