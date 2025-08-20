@@ -48,7 +48,7 @@ OnetDNS는 GitHub Actions를 통해 **Node 1과 Node 2 두 서버의** 주요 DN
 | DoT | `tls://one.dns.onetwohour.com` | TLS 1.3 |
 | DoQ | `quic://one.dns.onetwohour.com` | QUIC |
 | DoH3 | `h3://one.dns.onetwohour.com/dns-query` | HTTP/3 (QUIC) |
-| DNSCrypt | `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t` | DNSCrypt |
+| DNSCrypt | `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzIGz0WQR4dpND2A4x8FgxpXGEoTVomHh7nr5DcqV_2jpIJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t` | DNSCrypt |
 
 ### DNS Node 2 서버
 | 프로토콜 | 주소 | 참고 |
@@ -58,7 +58,7 @@ OnetDNS는 GitHub Actions를 통해 **Node 1과 Node 2 두 서버의** 주요 DN
 | DoT | `tls://two.dns.onetwohour.com` | TLS 1.3 |
 | DoQ | `quic://two.dns.onetwohour.com` | QUIC |
 | DoH3 | `h3://two.dns.onetwohour.com/dns-query` | HTTP/3 (QUIC) |
-| DNSCrypt | `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ` | DNSCrypt |
+| DNSCrypt | `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyDFWSZvLoZbNa9GDQJYwC-tcC4OYcHWpFnmeEpHmnzhiSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ` | DNSCrypt |
 
 ---
 
@@ -101,7 +101,7 @@ iOS 14+ 및 macOS Big Sur+ 지원:
 - DoT: `tls://one.dns.onetwohour.com`, `tls://two.dns.onetwohour.com`
 - DoQ: `quic://one.dns.onetwohour.com`, `quic://two.dns.onetwohour.com`
 - H3: `h3://one.dns.onetwohour.com/dns-query`, `h3://two.dns.onetwohour.com/dns-query`
-- DNSCrypt: `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t`, `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ`
+- DNSCrypt: `sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzIGz0WQR4dpND2A4x8FgxpXGEoTVomHh7nr5DcqV_2jpIJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t`, `sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyDFWSZvLoZbNa9GDQJYwC-tcC4OYcHWpFnmeEpHmnzhiSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ`
 
 ---
 
