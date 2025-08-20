@@ -32,7 +32,7 @@ OnetDNS는 GitHub Actions를 통해 **Node 1과 Node 2 두 서버의** 주요 DN
 | **DNSSEC** | 레코드 위·변조 방지 |
 | **Privacy-first 정책** | 개인 식별이 가능한 DNS 질의 내용 미저장 |
 | **광고 차단** | 광고 및 트래커 차단 |
-| **다중 전송 프로토콜** | *DoH*, *DoT*, *DoQ*, *DoH3* 지원 |
+| **다중 전송 프로토콜** | *DoH*, *DoT*, *DoQ*, *DoH3*, *DNSCrypt* 지원 |
 | **이중화 구성** | Node 1/Node 2 서버로 안정성 확보 |
 | **독립적 운영** | 타사 업스트림(Google, Cloudflare 등)을 경유하지 않고 직접 질의 |
 
