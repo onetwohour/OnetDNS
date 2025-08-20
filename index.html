@@ -145,6 +145,16 @@
         background-repeat: no-repeat;
         transition: opacity 1s ease-in-out;
       }
+
+      .tab-btn.active {
+        background-color: rgb(14 165 233);
+        color: white;
+      }
+
+      .tab-btn.active:hover {
+        background-color: rgb(2 132 199);
+        color: white;
+      }
     </style>
   </head>
   <body class="bg-slate-900 text-slate-200">
@@ -205,14 +215,12 @@
           </div>
           <div id="sliderCtrls">
             <button onclick="slide('prev')" class="absolute top-1/2 left-2 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600/80 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img" aria-labelledby="prevIconTitle">
-                <title id="prevIconTitle">Previous Slide</title>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
             </button>
             <button onclick="slide('next')" class="absolute top-1/2 right-2 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600/80 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img" aria-labelledby="nextIconTitle">
-                <title id="nextIconTitle">Next Slide</title>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
               </svg>
             </button>
@@ -234,7 +242,7 @@
                     <div id="ping-dot-one" class="w-3 h-3 rounded-full bg-red-500 transition-colors"></div>
                     <span id="ping-state-one" class="font-medium">Off</span>
                   </div>
-                  <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="3.39.126.146" title="IP 주소 복사">
+                  <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="3.39.126.146" title="IP 복사">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path>
                     </svg>
@@ -251,7 +259,7 @@
                     <div id="ping-dot-two" class="w-3 h-3 rounded-full bg-red-500 transition-colors"></div>
                     <span id="ping-state-two" class="font-medium">Off</span>
                   </div>
-                  <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="15.165.111.52" title="IP 주소 복사">
+                  <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="15.165.111.52" title="IP 복사">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path>
                     </svg>
@@ -289,7 +297,7 @@
                   <div id="status-dot" class="w-4 h-4 rounded-full bg-yellow-500 transition-colors animate-pulse"></div>
                   <p id="status-text" class="text-lg font-bold text-yellow-400">확인 중...</p>
                 </div>
-                <button id="recheck-btn" class="p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" title="다시 확인">
+                <button id="recheck-btn" class="p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"></path>
                   </svg>
@@ -305,11 +313,11 @@
           <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg">
             <h2 class="text-2xl font-bold text-white mb-4">지원 프로토콜</h2>
             <div class="grid grid-cols-2 gap-3">
-              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="https://one.dns.onetwohour.com/dns-query&#10;https://two.dns.onetwohour.com/dns-query" title="DoH 주소 복사">DoH</button>
-              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="tls://one.dns.onetwohour.com&#10;tls://two.dns.onetwohour.com" title="DoT 주소 복사">DoT</button>
-              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="quic://one.dns.onetwohour.com&#10;quic://two.dns.onetwohour.com" title="DoQ 주소 복사">DoQ</button>
-              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="h3://one.dns.onetwohour.com/dns-query&#10;h3://two.dns.onetwohour.com/dns-query" title="HTTP/3 주소 복사">HTTP/3</button>
-              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t&#10;sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ" title="DNSCrypt 주소 복사">DNSCrypt</button>
+              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="https://one.dns.onetwohour.com/dns-query&#10;https://two.dns.onetwohour.com/dns-query" title="DoH 복사">DoH</button>
+              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="tls://one.dns.onetwohour.com&#10;tls://two.dns.onetwohour.com" title="DoT 복사">DoT</button>
+              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="quic://one.dns.onetwohour.com&#10;quic://two.dns.onetwohour.com" title="DoQ 복사">DoQ</button>
+              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="h3://one.dns.onetwohour.com/dns-query&#10;h3://two.dns.onetwohour.com/dns-query" title="HTTP/3 복사">HTTP/3</button>
+              <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICoFdOc0QM43-As6Y8vVU51ZY9bRGtu42VOnPAq8WfSbJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t&#10;sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyAdo6bR78RAWvRA2EwHYBH1lX6tXJEsVYhTNcg37IYkWyYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ" title="DNSCrypt 복사">DNSCrypt</button>
             </div>
           </div>
           <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg text-center">
@@ -334,8 +342,7 @@
         <div class="flex justify-between items-center p-4 border-b border-slate-700">
           <h2 class="text-xl font-bold text-white">설정 가이드</h2>
           <button onclick="closePopup()" class="p-2 rounded-full hover:bg-slate-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img" aria-labelledby="closeIconTitle">
-              <title id="closeIconTitle">Close Popup</title>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
@@ -406,7 +413,7 @@
                           </div>
                           <div class="flex items-start">
                             <span class="w-28 text-slate-400 shrink-0">HTTPS 템플릿:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
+                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
                           </div>
                         </div>
                       </div>
@@ -424,7 +431,7 @@
                           </div>
                           <div class="flex items-start">
                             <span class="w-28 text-slate-400 shrink-0">HTTPS 템플릿:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
+                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
                           </div>
                         </div>
                       </div>
@@ -534,19 +541,19 @@
                     <div class="space-y-2 pl-2">
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoH:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoT:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="tls://one.dns.onetwohour.com">tls://one.dns.onetwohour.com</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="tls://one.dns.onetwohour.com">tls://one.dns.onetwohour.com</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoQ:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="quic://one.dns.onetwohour.com">quic://one.dns.onetwohour.com</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="quic://one.dns.onetwohour.com">quic://one.dns.onetwohour.com</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">HTTP/3:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="h3://one.dns.onetwohour.com/dns-query">h3://one.dns.onetwohour.com/dns-query</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="h3://one.dns.onetwohour.com/dns-query">h3://one.dns.onetwohour.com/dns-query</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DNSCrypt:</span>
@@ -564,19 +571,19 @@
                     <div class="space-y-2 pl-2">
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoH:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoT:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="tls://two.dns.onetwohour.com">tls://two.dns.onetwohour.com</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="tls://two.dns.onetwohour.com">tls://two.dns.onetwohour.com</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DoQ:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="quic://two.dns.onetwohour.com">quic://two.dns.onetwohour.com</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="quic://two.dns.onetwohour.com">quic://two.dns.onetwohour.com</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">HTTP/3:</span>
-                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" data-copy="h3://two.dns.onetwohour.com/dns-query">h3://two.dns.onetwohour.com/dns-query</code>
+                        <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="h3://two.dns.onetwohour.com/dns-query">h3://two.dns.onetwohour.com/dns-query</code>
                       </div>
                       <div class="flex items-start">
                         <span class="w-20 text-slate-400 shrink-0">DNSCrypt:</span>
@@ -690,14 +697,20 @@
       guideBtn.addEventListener("click", openPopup);
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active", "bg-sky-500", "text-white"));
-          btn.classList.add("active", "bg-sky-500", "text-white");
+          document.querySelectorAll(".tab-btn").forEach((b) => {
+            b.classList.remove("active");
+          });
+          btn.classList.add("active");
           document.querySelectorAll(".tab-content").forEach((content) => content.classList.add("hidden"));
           const targetId = btn.dataset.target;
           document.getElementById(targetId).classList.remove("hidden");
         });
       });
-      document.querySelector('.tab-btn.active').classList.add('bg-sky-500', 'text-white');
+      const initiallyActive = document.querySelector('.tab-btn.active');
+      if (initiallyActive) {
+        initiallyActive.classList.add('active');
+      }
+
       let toastTimer;
 
       function showToast(message) {
