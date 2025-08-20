@@ -10,13 +10,28 @@
       <dict>
         <key>DNSProtocol</key>
         <string>TLS</string>
-        <key>ServerAddresses</key>
-        <array>
-          <string>3.39.126.146</string>
-        </array>
         <key>ServerName</key>
         <string>one.dns.onetwohour.com</string>
       </dict>
+      <key>OnDemandRules</key>
+      <array>
+        <dict>
+          <key>Action</key>
+          <string>Connect</string>
+          <key>InterfaceTypeMatch</key>
+          <string>WiFi</string>
+        </dict>
+        <dict>
+          <key>Action</key>
+          <string>Connect</string>
+          <key>InterfaceTypeMatch</key>
+          <string>Cellular</string>
+        </dict>
+        <dict>
+          <key>Action</key>
+          <string>Disconnect</string>
+        </dict>
+      </array>
       <key>PayloadIdentifier</key>
       <string>com.onetdns.node1</string>
       <key>PayloadType</key>
@@ -30,7 +45,7 @@
   <key>PayloadDisplayName</key>
   <string>Onet DNS Node 1</string>
   <key>PayloadDescription</key>
-  <string>광고 차단, 암호화, Privacy-First 정책이 적용된 Onet DNS</string>
+  <string>광고 차단, 암호화, Privacy-First 정책 적용</string>
   <key>PayloadIdentifier</key>
   <string>com.onetdns.node1.profile</string>
   <key>PayloadOrganization</key>
