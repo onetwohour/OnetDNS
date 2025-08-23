@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+          filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.3));
+        }
+        50% {
+          text-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+          filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+        }
+      }
+
+      body {
+        margin: 0;
+        background-color: #0f172a; /* slate-900 */
+        color: #e2e8f0; /* slate-200 */
+        font-family: "Pretendard Variable", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+
+      .nodevtools-container {
+        visibility: visible !important;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: radial-gradient(
+          ellipse at center,
+          hsl(222, 47%, 15%),
+          hsl(222, 47%, 11%)
+        );
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.5s ease-out forwards;
+        min-height: 100vh;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .nodevtools-content {
+        text-align: center;
+        max-width: 560px;
+      }
+
+      .nodevtools-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1.5rem;
+        color: #38bdf8;
+        animation: pulseGlow 2.5s infinite ease-in-out;
+      }
+
+      .nodevtools-title {
+        font-size: 2.25rem;
+        font-weight: 600;
+        color: #f8fafc;
+        line-height: 1.2;
+        margin-bottom: 0.75rem;
+        animation: pulseGlow 2.5s infinite ease-in-out;
+      }
+
+      .nodevtools-text {
+        font-size: 1.125rem;
+        color: #94a3b8;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nodevtools-container">
+      <div class="nodevtools-content">
+        <svg
+          class="nodevtools-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          role="img"
+          aria-labelledby="nodevtools-title"
+        >
+          <title id="nodevtools-title">개발자 도구 감지 아이콘</title>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+          ></path>
+        </svg>
+        <h1 class="nodevtools-title">DevTools 감지됨</h1>
+        <p class="nodevtools-text">
+          보안을 위해 개발자 도구를 종료한 뒤 다시 시도해 주세요.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
