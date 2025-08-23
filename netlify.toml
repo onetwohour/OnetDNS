@@ -18,3 +18,14 @@
   for = "/netlify/*"
   [headers.values]
   X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[redirects]]
+  from = "/src/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[headers]]
+  for = "/src/*"
+  [headers.values]
+  X-Robots-Tag = "noindex, nofollow, noarchive"
