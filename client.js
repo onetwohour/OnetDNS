@@ -237,12 +237,13 @@ function boot() {
   }
   async function pingLoop(prefix) {
     const target = `${prefix}.dns.onetwohour.com`;
-    const latency = await checkPing(target);
-    updatePingStatus(latency, prefix);
-    setInterval(async () => {
+    async function loop() {
       const latency = await checkPing(target);
       updatePingStatus(latency, prefix);
-    }, 5000);
+      const delay = latency.ok ? 60_000 : 5_000;
+      setTimeout(loop, delay);
+    }
+    loop();
   }
   ["one","two"].forEach(pingLoop);
 
