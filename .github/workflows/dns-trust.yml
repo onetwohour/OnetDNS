@@ -35,25 +35,6 @@ jobs:
             fi
           done
 
-      - name: Check DNSSEC
-        continue-on-error: true
-        run: |
-          servers=("3.39.126.146" "15.165.111.52")
-          server_names=("Primary" "Secondary")
-          
-          for i in "${!servers[@]}"; do
-            server="${servers[$i]}"
-            name="${server_names[$i]}"
-            echo "Checking DNSSEC on $name server ($server)"
-            
-            if kdig +dnssec @$server example.com | grep -q 'Flags:.* ad'; then
-              echo "🔒 DNSSEC on $name ($server): PASS"
-            else
-              echo "🚨 DNSSEC on $name ($server): FAIL"
-              touch /tmp/dns_failed
-            fi
-          done
-
       - name: Check DNS over HTTPS (DoH)
         continue-on-error: true
         run: |
@@ -110,6 +91,25 @@ jobs:
               echo "🔒 DoQ on $name ($server): PASS"
             else
               echo "🚨 DoQ on $name ($server): FAIL"
+              touch /tmp/dns_failed
+            fi
+          done
+
+      - name: Check DNSSEC
+        continue-on-error: true
+        run: |
+          servers=("3.39.126.146" "15.165.111.52")
+          server_names=("Primary" "Secondary")
+          
+          for i in "${!servers[@]}"; do
+            server="${servers[$i]}"
+            name="${server_names[$i]}"
+            echo "Checking DNSSEC on $name server ($server)"
+            
+            if kdig +dnssec @$server example.com | grep -q 'Flags:.* ad'; then
+              echo "🔒 DNSSEC on $name ($server): PASS"
+            else
+              echo "🚨 DNSSEC on $name ($server): FAIL"
               touch /tmp/dns_failed
             fi
           done
