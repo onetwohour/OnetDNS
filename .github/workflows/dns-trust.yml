@@ -33,7 +33,7 @@ jobs:
           set -euo pipefail
           sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/lock
           sudo apt-get update -y
-          sudo apt-get install -y --no-install-recommends knot-dnsutils
+          sudo apt-get install -y --no-install-recommends --no-install-suggests knot-dnsutils
 
       - name: Prepare APT cache for saving
         if: always()
