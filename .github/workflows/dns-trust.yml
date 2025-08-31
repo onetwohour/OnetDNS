@@ -10,6 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Speed up APT (skip docs/man/most locales)
+        run: |
+          set -euo pipefail
+          echo 'path-exclude=/usr/share/man/*'            | sudo tee /etc/dpkg/dpkg.cfg.d/01_nodoc
+          echo 'path-exclude=/usr/share/doc/*'            | sudo tee /etc/dpkg/dpkg.cfg.d/02_nodoc
+          echo 'path-exclude=/usr/share/locale/*'         | sudo tee /etc/dpkg/dpkg.cfg.d/03_nolocale
+          echo 'path-include=/usr/share/locale/en*'       | sudo tee -a /etc/dpkg/dpkg.cfg.d/03_nolocale
+          echo 'Acquire::Retries "3";'                    | sudo tee /etc/apt/apt.conf.d/80-retries
+          printf 'APT::Install-Recommends "false";\nAPT::Install-Suggests "false";\n' | sudo tee /etc/apt/apt.conf.d/90-no-recommends
+
       - name: Restore APT cache
         uses: actions/cache@v3
         with:
@@ -33,14 +43,13 @@ jobs:
           set -euo pipefail
           sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/lock
           sudo apt-get update -y
-          sudo apt-get install -y --no-install-recommends --no-install-suggests knot-dnsutils
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --no-install-recommends knot-dnsutils
 
       - name: Prepare APT cache for saving
         if: always()
         run: |
           rm -rf ./apt-cache
-          mkdir -p ./apt-cache/cache
-          mkdir -p ./apt-cache/lists
+          mkdir -p ./apt-cache/cache ./apt-cache/lists
           sudo cp -a /var/cache/apt/* ./apt-cache/cache/ || true
           sudo cp -a /var/lib/apt/lists/* ./apt-cache/lists/ || true
           sudo chown -R "$USER:$USER" ./apt-cache
@@ -66,7 +75,6 @@ jobs:
           set -euo pipefail
           IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
           IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
-
           for i in "${!SERVERS_ARR[@]}"; do
             server="${SERVERS_ARR[$i]}"
             name="${NAMES_ARR[$i]}"
@@ -85,7 +93,6 @@ jobs:
           IFS=' ' read -r -a URLS_ARR  <<< "${DOH_URLS}"
           IFS=' ' read -r -a HOSTS_ARR <<< "${DOH_HOSTS}"
           IFS=' ' read -r -a NAMES_ARR <<< "${SERVER_NAMES}"
-
           for i in "${!URLS_ARR[@]}"; do
             url="${URLS_ARR[$i]}"
             host="${HOSTS_ARR[$i]}"
@@ -105,7 +112,6 @@ jobs:
           set -euo pipefail
           IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
           IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
-
           for i in "${!SERVERS_ARR[@]}"; do
             server="${SERVERS_ARR[$i]}"
             name="${NAMES_ARR[$i]}"
@@ -124,7 +130,6 @@ jobs:
           set -euo pipefail
           IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
           IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
-
           for i in "${!SERVERS_ARR[@]}"; do
             server="${SERVERS_ARR[$i]}"
             name="${NAMES_ARR[$i]}"
@@ -143,7 +148,6 @@ jobs:
           set -euo pipefail
           IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
           IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
-
           for i in "${!SERVERS_ARR[@]}"; do
             server="${SERVERS_ARR[$i]}"
             name="${NAMES_ARR[$i]}"
