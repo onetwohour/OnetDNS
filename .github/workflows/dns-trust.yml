@@ -10,13 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install kdig
+      - name: Restore APT cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            /var/cache/apt
+            /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Install kdig (knot-dnsutils)
         run: |
-          if ! sudo apt-get install -y knot-dnsutils; then
-            echo "Retrying with update..."
-            sudo apt-get update
-            sudo apt-get install -y knot-dnsutils
-          fi
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends knot-dnsutils
 
       - name: Warm-up DNS Query
         run: |
