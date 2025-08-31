@@ -30,6 +30,7 @@ jobs:
 
       - name: Install kdig (knot-dnsutils)
         run: |
+          set -euo pipefail
           sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/lock
           sudo apt-get update -y
           sudo apt-get install -y --no-install-recommends knot-dnsutils
@@ -42,7 +43,7 @@ jobs:
           mkdir -p ./apt-cache/lists
           sudo cp -a /var/cache/apt/* ./apt-cache/cache/ || true
           sudo cp -a /var/lib/apt/lists/* ./apt-cache/lists/ || true
-          sudo chown -R $USER:$USER ./apt-cache
+          sudo chown -R "$USER:$USER" ./apt-cache
 
       - name: Save APT cache
         if: always()
@@ -53,36 +54,47 @@ jobs:
 
       - name: Define Variables
         run: |
-          echo "SERVERS=('3.39.126.146' '15.165.111.52')" >> $GITHUB_ENV
-          echo "SERVER_NAMES=('Primary' 'Secondary')" >> $GITHUB_ENV
-          echo "DOH_URLS=('https://one.dns.onetwohour.com/dns-query' 'https://two.dns.onetwohour.com/dns-query')" >> $GITHUB_ENV
-          echo "DOH_HOSTS=('one.dns.onetwohour.com' 'two.dns.onetwohour.com')" >> $GITHUB_ENV
+          {
+            echo "SERVERS=3.39.126.146 15.165.111.52"
+            echo "SERVER_NAMES=Primary Secondary"
+            echo "DOH_URLS=https://one.dns.onetwohour.com/dns-query https://two.dns.onetwohour.com/dns-query"
+            echo "DOH_HOSTS=one.dns.onetwohour.com two.dns.onetwohour.com"
+          } >> "$GITHUB_ENV"
 
       - name: Warm-up DNS Query
         run: |
-          for i in 0 1; do
-            server=${SERVERS[$i]}
-            name=${SERVER_NAMES[$i]}
-            echo "Warming up $name server ($server)..."
-            if kdig @$server example.com +short > /dev/null 2>&1; then
-              echo "✅ Warm-up $name: SUCCESS"
+          set -euo pipefail
+          IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
+          IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
+
+          for i in "${!SERVERS_ARR[@]}"; do
+            server="${SERVERS_ARR[$i]}"
+            name="${NAMES_ARR[$i]}"
+            echo "Warming up ${name} server (${server})..."
+            if kdig @"${server}" example.com +short > /dev/null 2>&1; then
+              echo "✅ Warm-up ${name}: SUCCESS"
             else
-              echo "⚠️ Warm-up $name: FAILED"
+              echo "⚠️ Warm-up ${name}: FAILED"
             fi
           done
 
       - name: Check DNS over HTTPS (DoH)
         continue-on-error: true
         run: |
-          for i in 0 1; do
-            url=${DOH_URLS[$i]}
-            host=${DOH_HOSTS[$i]}
-            name=${SERVER_NAMES[$i]}
-            echo "Checking DoH on $name ($url)..."
-            if kdig @$host +https=$url example.com +short > /dev/null 2>&1; then
-              echo "🔒 DoH $name: PASS"
+          set -euo pipefail
+          IFS=' ' read -r -a URLS_ARR  <<< "${DOH_URLS}"
+          IFS=' ' read -r -a HOSTS_ARR <<< "${DOH_HOSTS}"
+          IFS=' ' read -r -a NAMES_ARR <<< "${SERVER_NAMES}"
+
+          for i in "${!URLS_ARR[@]}"; do
+            url="${URLS_ARR[$i]}"
+            host="${HOSTS_ARR[$i]}"
+            name="${NAMES_ARR[$i]}"
+            echo "Checking DoH on ${name} (${url})..."
+            if kdig @"${host}" +https="${url}" example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoH ${name}: PASS"
             else
-              echo "🚨 DoH $name: FAIL"
+              echo "🚨 DoH ${name}: FAIL"
               touch /tmp/dns_failed
             fi
           done
@@ -90,14 +102,18 @@ jobs:
       - name: Check DNS over TLS (DoT)
         continue-on-error: true
         run: |
-          for i in 0 1; do
-            server=${SERVERS[$i]}
-            name=${SERVER_NAMES[$i]}
-            echo "Checking DoT on $name ($server)..."
-            if kdig +tls @$server -p 853 example.com +short > /dev/null 2>&1; then
-              echo "🔒 DoT $name: PASS"
+          set -euo pipefail
+          IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
+          IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
+
+          for i in "${!SERVERS_ARR[@]}"; do
+            server="${SERVERS_ARR[$i]}"
+            name="${NAMES_ARR[$i]}"
+            echo "Checking DoT on ${name} (${server})..."
+            if kdig +tls @"${server}" example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoT ${name}: PASS"
             else
-              echo "🚨 DoT $name: FAIL"
+              echo "🚨 DoT ${name}: FAIL"
               touch /tmp/dns_failed
             fi
           done
@@ -105,14 +121,18 @@ jobs:
       - name: Check DNS over QUIC (DoQ)
         continue-on-error: true
         run: |
-          for i in 0 1; do
-            server=${SERVERS[$i]}
-            name=${SERVER_NAMES[$i]}
-            echo "Checking DoQ on $name ($server)..."
-            if kdig +quic @$server -p 853 example.com +short > /dev/null 2>&1; then
-              echo "🔒 DoQ $name: PASS"
+          set -euo pipefail
+          IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
+          IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
+
+          for i in "${!SERVERS_ARR[@]}"; do
+            server="${SERVERS_ARR[$i]}"
+            name="${NAMES_ARR[$i]}"
+            echo "Checking DoQ on ${name} (${server})..."
+            if kdig +quic @"${server}" example.com +short > /dev/null 2>&1; then
+              echo "🔒 DoQ ${name}: PASS"
             else
-              echo "🚨 DoQ $name: FAIL"
+              echo "🚨 DoQ ${name}: FAIL"
               touch /tmp/dns_failed
             fi
           done
@@ -120,14 +140,18 @@ jobs:
       - name: Check DNSSEC
         continue-on-error: true
         run: |
-          for i in 0 1; do
-            server=${SERVERS[$i]}
-            name=${SERVER_NAMES[$i]}
-            echo "Checking DNSSEC on $name server ($server)..."
-            if kdig +dnssec @$server example.com | grep -q 'Flags:.* ad'; then
-              echo "🔒 DNSSEC $name: PASS"
+          set -euo pipefail
+          IFS=' ' read -r -a SERVERS_ARR <<< "${SERVERS}"
+          IFS=' ' read -r -a NAMES_ARR   <<< "${SERVER_NAMES}"
+
+          for i in "${!SERVERS_ARR[@]}"; do
+            server="${SERVERS_ARR[$i]}"
+            name="${NAMES_ARR[$i]}"
+            echo "Checking DNSSEC on ${name} server (${server})..."
+            if kdig +dnssec @"${server}" example.com | grep -qE 'Flags:.*\bad\b'; then
+              echo "🔒 DNSSEC ${name}: PASS"
             else
-              echo "🚨 DNSSEC $name: FAIL"
+              echo "🚨 DNSSEC ${name}: FAIL"
               touch /tmp/dns_failed
             fi
           done
