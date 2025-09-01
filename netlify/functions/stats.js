@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
   }
 
   const responses = await Promise.all(
-    urls.map(u => fetch(`http://${u}${API_PATH}`, { headers: authHeader }))
+    urls.map(u => fetch(`https://${u}${API_PATH}`, { headers: authHeader }))
   );
 
   const failed = responses.find(r => !r.ok);
