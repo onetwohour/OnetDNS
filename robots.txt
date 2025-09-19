@@ -1,7 +1,4 @@
 User-agent: *
-Allow: /$
-Allow: /sitemap.xml
-Allow: /*.webp$
-Allow: /*.js$
-Disallow: /
+Allow: /
+Disallow: /close-devtools.html
 Sitemap: https://onetdns.onetwohour.com/sitemap.xml
