@@ -188,13 +188,16 @@ function boot() {
     const rawText = el?.dataset?.copy;
     if (!rawText) return;
   
-    const textToCopy = rawText.replaceAll('&#10;', '\r\n');
+    const textToCopy = String(rawText)
+      .replace(/&#10;|&#x0a;/gi, '\n')
+      .replace(/\\n/g, '\n')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r(?!\n)/g, '\n')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .replace(/\n/g, '\r\n');
   
     try {
-      const blob = new Blob([textToCopy], { type: 'text/plain' });
-      const item = new ClipboardItem({ 'text/plain': blob });
-      
-      await navigator.clipboard.write([item]);
+      await navigator.clipboard.writeText(textToCopy);
   
       showToast('복사됨!');
       const originalContent = el.innerHTML;
@@ -213,7 +216,6 @@ function boot() {
     } catch (err) {
       console.error('클립보드 쓰기 실패:', err);
       showToast('복사에 실패했습니다.');
-      navigator.clipboard.writeText(textToCopy);
     }
   }
   document.body.addEventListener('click', (event) => {
