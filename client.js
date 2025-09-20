@@ -184,31 +184,37 @@ function boot() {
       toast.classList.add("opacity-0","bottom-0");
     }, 2000);
   }
-  function handleCopy(el) {
+  async function handleCopy(el) {
     const rawText = el?.dataset?.copy;
     if (!rawText) return;
-    const textToCopy = rawText.replaceAll('&#10;', '\0\r\n');
-    navigator.clipboard.writeText(textToCopy).then(() => {
+  
+    const textToCopy = rawText.replaceAll('&#10;', '\r\n');
+  
+    try {
+      const blob = new Blob([textToCopy], { type: 'text/plain' });
+      const item = new ClipboardItem({ 'text/plain': blob });
+      
+      await navigator.clipboard.write([item]);
+  
       showToast('복사됨!');
       const originalContent = el.innerHTML;
       const originalClasses = el.className;
       if (el.tagName === 'BUTTON') {
-        el.classList.add('bg-green-500','text-white');
-        el.classList.remove('bg-slate-700','hover:bg-slate-600');
+        el.classList.add('bg-green-500', 'text-white');
+        el.classList.remove('bg-slate-700', 'hover:bg-slate-600');
         el.disabled = true;
-      } else if (el.tagName === 'CODE') {
-        el.classList.add('text-sky-400');
-        el.classList.remove('text-emerald-400');
       }
       setTimeout(() => {
         el.innerHTML = originalContent;
         el.className = originalClasses;
         if (el.tagName === 'BUTTON') el.disabled = false;
       }, 2000);
-    }).catch(err => {
-      console.error('복사 실패:', err);
+  
+    } catch (err) {
+      console.error('클립보드 쓰기 실패:', err);
       showToast('복사에 실패했습니다.');
-    });
+      navigator.clipboard.writeText(textToCopy);
+    }
   }
   document.body.addEventListener('click', (event) => {
     const target = event.target.closest('.copy-btn, .copy-btn-text, .copy-dns');
