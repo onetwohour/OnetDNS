@@ -187,7 +187,7 @@ function boot() {
   function handleCopy(el) {
     const rawText = el?.dataset?.copy;
     if (!rawText) return;
-    const textToCopy = rawText.replaceAll('&#10;', '\n');
+    const textToCopy = rawText.replaceAll('&#10;', '\r\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
       showToast('복사됨!');
       const originalContent = el.innerHTML;
