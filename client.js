@@ -185,8 +185,9 @@ function boot() {
     }, 2000);
   }
   function handleCopy(el) {
-    const textToCopy = el?.dataset?.copy;
-    if (!textToCopy) return;
+    const rawText = el?.dataset?.copy;
+    if (!rawText) return;
+    const textToCopy = rawText.replaceAll('&#10;', '\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
       showToast('복사됨!');
       const originalContent = el.innerHTML;
