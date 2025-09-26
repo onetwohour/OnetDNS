@@ -296,14 +296,47 @@ function boot() {
       }
     }
   }
+  function ensureBadge(el) {
+    let b = el.querySelector('.badge-reco');
+    if (!b) {
+      b = document.createElement('span');
+      b.className = 'badge-reco';
+      b.textContent = '추천해요!';
+      el.appendChild(document.createTextNode(' '));
+      el.appendChild(b);
+    }
+    return b;
+  }
+  function setRecommendBadge(nodeCardEl, show) {
+    if (!nodeCardEl) return;
+    const labelP = nodeCardEl.querySelector(':scope > div:first-child > p.text-sm');
+    if (!labelP) return;
+    const badge = ensureBadge(labelP);
+    badge.style.display = show ? 'inline-block' : 'none';
+  }
+  function getNodeCards() {
+    const one = document.getElementById('ping-dot-one')?.closest('div.flex.items-center.justify-between');
+    const two = document.getElementById('ping-dot-two')?.closest('div.flex.items-center.justify-between');
+    return { one, two };
+  }
   async function updateDnsStats() {
     try {
       const res = await fetch("/.netlify/functions/stats", { cache: "no-store" });
       if (!res.ok) return;
-      const { queries, blocked, ratio } = await res.json();
-      updateRollingNumber(document.getElementById("dns-total"),   queries);
-      updateRollingNumber(document.getElementById("dns-blocked"), blocked);
-      updateRollingNumber(document.getElementById("dns-ratio"),   ratio, 1);
+      const payload = await res.json();
+      const perServer = Array.isArray(payload.queries) ? payload.queries : null;
+      const totalQueries = perServer
+        ? perServer.reduce((sum, s) => sum + (Number(s.queries) || 0), 0)
+        : Number(payload.queries) || 0;
+      updateRollingNumber(document.getElementById("dns-total"),   totalQueries);
+      updateRollingNumber(document.getElementById("dns-blocked"), Number(payload.blocked) || 0);
+      updateRollingNumber(document.getElementById("dns-ratio"),   Number(payload.ratio) || 0, 1);
+      const { one: nodeOneCard, two: nodeTwoCard } = getNodeCards();
+      setRecommendBadge(nodeOneCard, false);
+      setRecommendBadge(nodeTwoCard, false);
+      const recNode = payload.recommended?.node;
+      if (recNode === 'one') setRecommendBadge(nodeOneCard, true);
+      if (recNode === 'two') setRecommendBadge(nodeTwoCard, true);
     } catch (e) {
       console.error("Failed to fetch DNS stats:", e);
     }
