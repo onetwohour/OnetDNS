@@ -1,4 +1,4 @@
-# <img src="./assets/favicon.png" width="28" style="vertical-align:middle" /> OnetDNS
+# <img src="./assets/favicon.png" width="28" style="vertical-align:middle" /> Onet DNS
 
 ### 공식 사이트: [Onet DNS](https://onetdns.onetwohour.com)
 
