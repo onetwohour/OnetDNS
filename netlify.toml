@@ -18,3 +18,9 @@
   for = "/netlify/*"
   [headers.values]
   X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[redirects]]
+  from = "/close-devtools.html"
+  to = "/close-devtools"
+  status = 200
+  force = true
