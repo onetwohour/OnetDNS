@@ -1,28 +1,12 @@
 const app = document.getElementById('app');
 
 async function mount() {
-  try {
-    const url = `/.netlify/functions/app?ts=${Date.now()}`;
-    const res = await fetch(url, {
-      cache: 'no-store',
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    });
-    if (!res.ok) throw new Error('로드 실패');
-    const html = await res.text();
-    app.innerHTML = html;
-    app.style.display = 'block';
-    app.style.visibility = "visible";
-    document.querySelector(".noscript-container").style.visibility = "hidden";
-    if (typeof boot === 'function') boot();
-    document.getElementById("footer").style.visibility = "visible";
-    document.getElementById("toast").style.visibility = "visible";
-  } catch (err) {
-    app.innerHTML = '<p style="color:red;text-align:center">콘텐츠를 불러오지 못했습니다.</p>';
-    app.style.display = 'block';
-    console.error(err);
-  }
+  app.style.display = 'block';
+  app.style.visibility = "visible";
+  document.querySelector(".noscript-container").style.visibility = "hidden";
+  if (typeof boot === 'function') boot();
+  document.getElementById("footer").style.visibility = "visible";
+  document.getElementById("toast").style.visibility = "visible";
 }
 
 function boot() {
