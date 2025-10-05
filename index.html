@@ -9,27 +9,6 @@
     <meta property="og:title" content="Onet DNS - 안전하고 빠른 DNS" />
     <meta property="og:description" content="추적 없는 안전한 DNS. Android, iOS, Windows 등 모든 플랫폼 지원." />
     <meta property="og:type" content="website" />
-    <link rel="preload" href="/close-devtools">
-    <script>
-      "undefined"!=typeof InstallTrigger&&!!navigator.oscpu&&((()=>{let t;const e=new Error;Object.defineProperty(e,"message",{get:()=>{clearInterval(t);try{window.location.href="./close-devtools"}catch(e){}}}),t=setInterval(()=>{console.log(e),console.clear()},100)})(),(()=>{let t;const e={get enabled(){clearInterval(t);try{window.location.href="./close-devtools"}catch(e){}return!1}},o=()=>{};o.toString=()=>`\n                function() { return "trap"; }\n                //# sourceURL=chrome-extension://__firefox_source_map_trap__\n            `,Object.defineProperty(window,"__firefox_source_map_trap__",e),t=setInterval(()=>{console.log(o),console.clear()},200)})());
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/disable-devtool"></script>
-    <script>
-      (function () {
-        const REDIRECT_URL = '/close-devtools';
-        if (!window.DisableDevtool) {
-          try { location.replace(REDIRECT_URL); } catch (e) { location.href = REDIRECT_URL; }
-          return;
-        }
-        DisableDevtool({
-          ondevtoolopen: function() {
-            try { location.replace(REDIRECT_URL); } catch (e) { location.href = REDIRECT_URL; }
-          },
-          interval: 200,
-          clearIntervalWhenDevOpenTrigger: true
-        });
-      })();
-    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -65,9 +44,7 @@
         mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%); mask-mode: alpha; mask-repeat: no-repeat; mask-size: 100% 100%;
         box-shadow: 0 10px 30px -15px rgba(0, 0, 0, .3);
       }
-      body, body * { -webkit-user-select: none !important; -moz-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important; }
-      img, a, svg { -webkit-user-drag: none; user-select: none; }
-      #footer #main-container { visibility: hidden; }
+      #footer, #main-container, #toast { visibility: hidden; }
       @keyframes fadeIn { from {opacity:0; transform:scale(0.98)} to {opacity:1; transform:scale(1)} }
       @keyframes pulseGlow { 0%,100%{ text-shadow:0 0 10px rgba(56,189,248,.4); filter:drop-shadow(0 0 5px rgba(56,189,248,.3)) } 50%{ text-shadow:0 0 20px rgba(56,189,248,.8); filter:drop-shadow(0 0 15px rgba(56,189,248,.6)) } }
       .noscript-container { visibility: visible; position: fixed; inset: 0; z-index: 9999; background: radial-gradient(ellipse at center, hsl(222,47%,15%), hsl(222,47%,11%));
@@ -110,64 +87,18 @@
     <div id="app" aria-live="polite"></div>
     <script type="module" src="/client.js"></script>
     <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50"> 복사됨! </div>
-    <footer class="hidden text-center text-slate-500 text-sm mt-16 pb-8" id="footer">
+    <footer class="text-center text-slate-500 text-sm mt-16 pb-8" id="footer">
       <p>👤 <span class="font-semibold">onetwohour</span> | ✉️ <a href="mailto:mail@onetwohour.com" class="underline hover:text-sky-400">E-mail</a> | 🌐 <a href="https://github.com/onetwohour/onetdns" target="_blank" class="underline hover:text-sky-400">GitHub</a>
       </p>
-      <p class="mt-2 text-xs text-slate-600">© 2025 Onet DNS. All Rights Reserved.</p>
+      <p class="mt-2 text-xs text-slate-600">© <span id="current-year">2025</span> Onet DNS. All Rights Reserved.</p>
       <p class="mt-2 text-xs text-slate-600">Powered by Tailwind CSS & Heroicons, Inter & Pretendard</p>
     </footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const yearEl = document.getElementById('current-year');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+      });
+    </script>
   </body>
-  <script>
-    (function setupBlockers() {
-      const ALLOW_SELECTOR = '.allow-context, input, textarea';
-
-      document.addEventListener('contextmenu', (e) => {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        e.preventDefault();
-      }, { capture: true });
-
-      document.addEventListener('mousedown', (e) => {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        if (e.button === 2) e.preventDefault();
-      }, true);
-
-      document.addEventListener('keydown', (e) => {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        if ((e.shiftKey && e.key === 'F10') || e.key === 'ContextMenu') {
-          e.preventDefault();
-        }
-      }, true);
-
-      let pressTimer = null;
-      const LONGPRESS_MS = 450;
-
-      function startPress(e) {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        clearTimeout(pressTimer);
-        pressTimer = setTimeout(() => {
-          window.getSelection?.().removeAllRanges?.();
-        }, LONGPRESS_MS);
-      }
-      function cancelPress() { clearTimeout(pressTimer); }
-
-      document.addEventListener('touchstart', (e) => {
-        if (e.touches.length > 1) return;
-        startPress(e);
-      }, { passive: true });
-
-      document.addEventListener('touchend', cancelPress, true);
-      document.addEventListener('touchcancel', cancelPress, true);
-
-      document.addEventListener('selectstart', (e) => {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        e.preventDefault();
-      }, true);
-
-      document.addEventListener('dragstart', (e) => {
-        if (e.target.closest(ALLOW_SELECTOR)) return;
-        e.preventDefault();
-      }, true);
-    })();
-  </script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1c8d017e54aa457b854a6e50458ceef7"}'></script>
 </html>

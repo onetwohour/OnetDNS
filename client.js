@@ -16,7 +16,8 @@ async function mount() {
     app.style.visibility = "visible";
     document.querySelector(".noscript-container").style.visibility = "hidden";
     if (typeof boot === 'function') boot();
-    document.getElementById("footer").classList.remove('hidden');
+    document.getElementById("footer").style.visibility = "visible";
+    document.getElementById("toast").style.visibility = "visible";
   } catch (err) {
     app.innerHTML = '<p style="color:red;text-align:center">콘텐츠를 불러오지 못했습니다.</p>';
     app.style.display = 'block';
