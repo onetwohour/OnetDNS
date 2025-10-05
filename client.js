@@ -258,17 +258,49 @@ function boot() {
   ["one","two"].forEach(pingLoop);
 
   function createSpan(ch) {
+    if (ch === ",") {
+      const group = document.createElement("span");
+      group.className = "digit-group comma-group";
+      const stack = document.createElement("span");
+      stack.className = "digit-stack";
+      const blank = document.createElement("span");
+      blank.className = "comma-blank";
+      blank.textContent = "";
+      const comma = document.createElement("span");
+      comma.className = "comma-glyph";
+      comma.textContent = ",";
+      stack.appendChild(blank);
+      stack.appendChild(comma);
+      group.appendChild(stack);
+      group.style.display = "inline-block";
+      group.style.overflow = "hidden";
+      group.style.verticalAlign = "bottom";
+      return group;
+    }
     if (ch === ".") {
+      const group = document.createElement("span");
+      group.className = "digit-group dot-group";
+      const stack = document.createElement("span");
+      stack.className = "digit-stack";
+      const blank = document.createElement("span");
+      blank.className = "dot-blank";
+      blank.textContent = "";
       const dot = document.createElement("span");
-      dot.className = "decimal-dot";
+      dot.className = "dot-glyph";
       dot.textContent = ".";
-      return dot;
+      stack.appendChild(blank);
+      stack.appendChild(dot);
+      group.appendChild(stack);
+      group.style.display = "inline-block";
+      group.style.overflow = "hidden";
+      group.style.verticalAlign = "bottom";
+      return group;
     }
     const group = document.createElement("span");
     group.className = "digit-group";
     const stack = document.createElement("span");
     stack.className = "digit-stack";
-    for (let n=0;n<10;n++){
+    for (let n = 0; n < 10; n++) {
       const s = document.createElement("span");
       s.textContent = n;
       stack.appendChild(s);
@@ -276,25 +308,74 @@ function boot() {
     group.appendChild(stack);
     return group;
   }
-  function updateRollingNumber(el, value, fixed = 1) {
+
+  function updateRollingNumber(el, value, fixed = 1, locale = "en-US", staggerMs = 30, durationMs = 300) {
     if (!el) return;
     const isInt = Number(value) % 1 === 0;
-    const strValue = isInt ? String(value) : Number(value).toFixed(fixed);
-    const chars = [...strValue];
-    if (el.children.length !== chars.length) {
+    const strValue = isInt
+      ? Number(value).toLocaleString(locale)
+      : Number(value).toLocaleString(locale, { minimumFractionDigits: fixed, maximumFractionDigits: fixed });
+    const firstRender = !el.dataset.prev;
+    const prevStr = el.dataset.prev || strValue;
+
+    if (el.children.length !== [...strValue].length) {
       el.innerHTML = "";
-      chars.forEach(ch => el.appendChild(createSpan(ch)));
+      [...strValue].forEach(ch => el.appendChild(createSpan(ch)));
     }
-    const digitGroups = el.querySelectorAll(".digit-group");
-    const unit = el.querySelector(".digit-stack span")?.getBoundingClientRect().height || 0;
+
+    const unitEl =
+      el.querySelector(".digit-group:not(.comma-group):not(.dot-group) .digit-stack span") ||
+      el.querySelector(".digit-stack span");
+    const unit = unitEl?.getBoundingClientRect().height || 0;
     if (unit === 0) return;
-    let i = 0;
-    for (const char of chars) {
-      if (char === ".") continue;
-      if (i < digitGroups.length) {
-        const stack = digitGroups[i++].firstElementChild;
-        stack.style.transform = `translateY(-${+char * unit}px)`;
+
+    const nextChars = [...strValue];
+    const prevChars = padLeft(prevStr, nextChars.length).split("");
+    const groups = el.querySelectorAll(".digit-group, .comma-group, .dot-group");
+
+    let gi = 0;
+    for (let idx = 0; idx < nextChars.length; idx++) {
+      const ch = nextChars[idx];
+      const prev = prevChars[idx] ?? " ";
+      if (gi >= groups.length) break;
+
+      const group = groups[gi++];
+      const stack = group.firstElementChild;
+      const delay = gi * staggerMs + "ms";
+      const trans = `transform ${durationMs}ms ease-out ${delay}`;
+
+      if (group.classList.contains("comma-group") || group.classList.contains("dot-group")) {
+        const glyph = stack.children[1];
+        const glyphWidth = glyph.getBoundingClientRect().width;
+        const fromIdx = firstRender ? 0 : ((prev === "," || prev === ".") ? 1 : 0);
+        const toIdx = (ch === "," || ch === ".") ? 1 : 0;
+        const fromW = firstRender ? 0 : (fromIdx === 1 ? glyphWidth : 0);
+        const toW = toIdx === 1 ? glyphWidth : 0;
+
+        stack.style.transition = "none";
+        group.style.transition = "none";
+        stack.style.transform = `translateY(-${fromIdx * unit}px)`;
+        group.style.width = fromW + "px";
+
+        requestAnimationFrame(() => {
+          stack.style.transition = trans;
+          group.style.transition = `width ${durationMs}ms ease-out ${delay}`;
+          stack.style.transform = `translateY(-${toIdx * unit}px)`;
+          group.style.width = toW + "px";
+        });
+        continue;
       }
+
+      if (/[0-9]/.test(ch)) {
+        stack.style.transition = trans;
+        stack.style.transform = `translateY(-${Number(ch) * unit}px)`;
+      }
+    }
+
+    el.dataset.prev = strValue;
+
+    function padLeft(str, targetLen, padChar = " ") {
+      return padChar.repeat(Math.max(0, targetLen - str.length)) + str;
     }
   }
   function ensureBadge(el) {
