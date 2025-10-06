@@ -293,7 +293,7 @@ function boot() {
     return group;
   }
 
-  function updateRollingNumber(el, value, fixed = 1, locale = "en-US", staggerMs = 30, durationMs = 300) {
+  function updateRollingNumber(el, value, fixed = 1, locale = "en-US", staggerMs = 100, durationMs = 1000) {
     if (!el) return;
     const isInt = Number(value) % 1 === 0;
     const strValue = isInt
@@ -317,6 +317,13 @@ function boot() {
     const prevChars = padLeft(prevStr, nextChars.length).split("");
     const groups = el.querySelectorAll(".digit-group, .comma-group, .dot-group");
 
+    const minDur = Math.max(300, durationMs * 0.35);
+    const maxDur = durationMs;
+    const digitDiff = (a, b) => {
+      if (!/[0-9]/.test(a) || !/[0-9]/.test(b)) return 0;
+      return Math.abs(Number(b) - Number(a));
+    };
+
     let gi = 0;
     for (let idx = 0; idx < nextChars.length; idx++) {
       const ch = nextChars[idx];
@@ -325,8 +332,11 @@ function boot() {
 
       const group = groups[gi++];
       const stack = group.firstElementChild;
+
+      const diff = digitDiff(prev, ch);
+      const curDur = maxDur - ((maxDur - minDur) * (diff / 9));
       const delay = gi * staggerMs + "ms";
-      const trans = `transform ${durationMs}ms ease-out ${delay}`;
+      const trans = `transform ${curDur}ms ease-out ${delay}`;
 
       if (group.classList.contains("comma-group") || group.classList.contains("dot-group")) {
         const glyph = stack.children[1];
@@ -342,7 +352,7 @@ function boot() {
         group.style.width = fromW + "px";
 
         requestAnimationFrame(() => {
-          stack.style.transition = trans;
+          stack.style.transition = `transform ${durationMs}ms ease-out ${delay}`;
           group.style.transition = `width ${durationMs}ms ease-out ${delay}`;
           stack.style.transform = `translateY(-${toIdx * unit}px)`;
           group.style.width = toW + "px";
@@ -351,8 +361,17 @@ function boot() {
       }
 
       if (/[0-9]/.test(ch)) {
-        stack.style.transition = trans;
-        stack.style.transform = `translateY(-${Number(ch) * unit}px)`;
+        if (firstRender) {
+          stack.style.transition = "none";
+          stack.style.transform = `translateY(${unit}px)`;
+          requestAnimationFrame(() => {
+            stack.style.transition = trans;
+            stack.style.transform = `translateY(-${Number(ch) * unit}px)`;
+          });
+        } else {
+          stack.style.transition = trans;
+          stack.style.transform = `translateY(-${Number(ch) * unit}px)`;
+        }
       }
     }
 
