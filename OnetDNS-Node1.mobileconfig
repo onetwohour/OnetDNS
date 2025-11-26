@@ -32,8 +32,14 @@
           <string>Disconnect</string>
         </dict>
       </array>
+      <key>PayloadDisplayName</key>
+      <string>Onet DNS Node 1</string>
+      <key>PayloadDescription</key>
+      <string>OnetDNS TLS 암호화 DNS 설정</string>
       <key>PayloadIdentifier</key>
-      <string>com.onetdns.node1</string>
+      <string>com.onetdns.node1.dnssettings</string>
+      <key>PayloadOrganization</key>
+      <string>OnetDNS</string>
       <key>PayloadType</key>
       <string>com.apple.dnsSettings.managed</string>
       <key>PayloadUUID</key>
