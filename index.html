@@ -1,550 +1,771 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Onet DNS - 광고 차단 및 개인정보 보호 DNS</title>
-    <meta name="description" content="광고 차단, DNS 암호화, Zero Query Log 정책을 통해 사용자의 개인정보를 보호하는 Onet DNS 서비스입니다. DoH, DoT, DoQ, DNSCrypt 등 최신 프로토콜을 지원합니다." />
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Onet DNS - 안전하고 빠른 DNS" />
-    <meta property="og:description" content="추적 없는 안전한 DNS. Android, iOS, Windows 등 모든 플랫폼 지원." />
-    <meta property="og:type" content="website" />
+    <title>Onet DNS - Secure & Fast DNS</title>
+    <meta name="description" content="광고 차단, DNS 암호화, Zero Query Log. 당신의 인터넷을 더 빠르고 안전하게." />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
-    <meta name="google-site-verification" content="RAa1iSgrWRNlz7VzAxS0z8jYZpdCdzEKDUWt9qFMxFI" />
-    <link rel="preload" as="image" href="./background_q75.webp" type="image/webp" fetchpriority="high">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DK8H9CQ7L"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-1DK8H9CQ7L');
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "serviceType": "DNS Service",
-        "provider": { "@type": "Organization", "name": "Onet DNS" },
-        "areaServed": "Global",
-        "name": "Onet DNS",
-        "description": "광고 차단, 암호화, Privacy-First 정책이 적용된 Onet DNS 서비스입니다."
-      }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <style>
-      #app { display: none; }
-      .hero-section { height: 95%; background-size: cover; background-position: center; position: relative;
-        -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
-        mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%); mask-mode: alpha; mask-repeat: no-repeat; mask-size: 100% 100%;
-        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, .3);
+      :root { --font-main: 'Pretendard Variable', 'Outfit', sans-serif; }
+      body { font-family: var(--font-main); background-color: #050505; color: #ffffff; }
+      
+      /* 커스텀 스크롤바 */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #050505; }
+      ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+      /* 유틸리티 */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      /* 애니메이션 */
+      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+      .animate-float { animation: float 6s ease-in-out infinite; }
+      
+      /* 숫자 롤링용 스타일 */
+      .rolling { display: inline-block; font-variant-numeric: tabular-nums; }
+      @media (max-width: 640px) {
+        .rolling .digit-group { margin-right: 0.06em; }
+        .rolling .digit-group:last-child { margin-right: 0; }
       }
-      #footer, #main-container, #toast { visibility: hidden; }
-      @keyframes fadeIn { from {opacity:0; transform:scale(0.98)} to {opacity:1; transform:scale(1)} }
-      @keyframes pulseGlow { 0%,100%{ text-shadow:0 0 10px rgba(56,189,248,.4); filter:drop-shadow(0 0 5px rgba(56,189,248,.3)) } 50%{ text-shadow:0 0 20px rgba(56,189,248,.8); filter:drop-shadow(0 0 15px rgba(56,189,248,.6)) } }
-      .noscript-container { visibility: visible; position: fixed; inset: 0; z-index: 9999; background: radial-gradient(ellipse at center, hsl(222,47%,15%), hsl(222,47%,11%));
-        display:flex; justify-content:center; align-items:center; font-family: "Pretendard Variable", sans-serif; animation: fadeIn .5s ease-out forwards; }
-      .noscript-content { text-align:center; color:#cbd5e1; opacity:0; animation: fadeIn .5s ease-in-out 5s forwards; }
-      .noscript-icon { width:64px; height:64px; margin:0 auto 1.5rem; color:#38bdf8; animation: pulseGlow 2.5s infinite ease-in-out; }
-      .noscript-title { font-size:2.25rem; font-weight:600; color:#f8fafc; line-height:1.2; margin-bottom:.75rem; animation: pulseGlow 2.5s infinite ease-in-out; }
-      .noscript-text { font-size:1.125rem; color:#94a3b8; max-width:400px; }
-      ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #1e293b; }
-      ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-      .rolling { font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit; vertical-align: middle; }
-      .digit-group { position: relative; width: 1ch; height: 1em; overflow: hidden; display: inline-block; vertical-align: -.175em; text-align:center; }
-      .digit-group::before { content:"0"; visibility:hidden; line-height:1em; height:1em; }
-      .digit-stack { position:absolute; top:0; left:0; display:flex; flex-direction:column; transition: transform .5s cubic-bezier(.25,1,.5,1); }
-      .digit-stack span { display:block; height:1em; line-height:1em; text-align:center; }
-      .decimal-dot { display:inline-block; width:.4ch; vertical-align:middle; text-align:center; }
-      .popup-content { max-height:70vh; overflow-y:auto; }
-      .bg-layer { inset:0; background-size:cover; background-position:center; background-repeat:no-repeat; transition: opacity 1s ease-in-out; }
-      .tab-btn.active { background-color: rgb(14 165 233); color: #fff; }
-      .tab-btn.active:hover { background-color: rgb(2 132 199); color: #fff; }
-      .badge-reco { display:inline-block; margin-left:.5rem; padding:2px 8px; font-size:12px; line-height:1; border-radius:9999px; border:1px solid currentColor; color:#22c55e; background: rgba(16,185,129,.12); vertical-align: middle; }
+      .digit-group { display: inline-block; position: relative; height: 1em; overflow: hidden; vertical-align: bottom; }
+      .digit-stack { display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+
+      /* 배경 메시 그라디언트 */
+      .mesh-bg {
+        position: fixed; inset: 0; z-index: -10;
+        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        opacity: 0.4; pointer-events: none;
+      }
+      .noise-overlay {
+        position: fixed; inset: 0; z-index: -9;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        opacity: 0.5; pointer-events: none;
+      }
+
+      /* 탭 버튼 활성 상태 */
+      .tab-btn.active { color: #fff; border-bottom: 2px solid #fff; }
+      .tab-btn { color: #666; padding-bottom: 0.5rem; transition: all 0.3s; }
+      .tab-btn:hover { color: #999; }
+
+      #ai-response-text a {
+        color: #fff;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-color: rgba(255,255,255,0.35);
+        transition: text-decoration-color 0.2s ease, opacity 0.2s ease;
+      }
+      #ai-response-text a:hover {
+        text-decoration-color: rgba(255,255,255,0.8);
+        opacity: 0.95;
+      }
     </style>
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).catch(() => {});
       }
     </script>
   </head>
-  <body class="bg-slate-900 text-slate-200">
-    <div class="noscript-container" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;">
-      <div class="noscript-content" style="max-width:560px;text-align:center;font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif;">
-        <svg class="noscript-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" role="img" aria-labelledby="noscript-title" width="64" height="64" style="margin-bottom:12px;">
-          <title id="noscript-title">JavaScript 비활성화됨 아이콘</title>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"></path>
-        </svg>
-        <h1 class="noscript-title" style="margin:0 0 8px;font-size:24px;">JavaScript가 필요합니다</h1>
-        <p class="noscript-text" style="margin:0;color:#555;">이 페이지를 올바르게 표시하려면 JavaScript를 활성화해 주세요.</p>
-      </div>
-    </div>
-    <div id="app" aria-live="polite">
-      <div id="content">
-        <div class="fixed inset-0 -z-10 h-full w-full bg-slate-900 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem]">
-          <div id="bg-container" class="hero-section relative min-h-[100dvh]">
-            <div id="bg-low" class="bg-layer bg-low absolute inset-0 z-[1] bg-[url('./background_q75.webp')]"></div>
-            <div id="bg-mid" class="bg-layer bg-mid absolute inset-0 z-[2] bg-[url('./background_q85.webp')]"></div>
-            <div id="bg-full" class="bg-layer bg-full absolute inset-0 z-[3] bg-[url('./background.webp')]"></div>
+  <body class="antialiased selection:bg-white selection:text-black">
+    
+    <div class="mesh-bg"></div>
+    <div class="noise-overlay"></div>
+
+    <div id="app" class="relative min-h-screen flex flex-col">
+      <nav class="w-full py-6 px-6 md:px-12 flex justify-between items-between z-50">
+        <div class="text-xl font-bold tracking-tight">Onet DNS</div>
+        <div class="text-xs text-neutral-500 font-mono hidden md:block">KR • SECURE NODE</div>
+      </nav>
+
+      <main class="flex-grow container mx-auto px-6 md:px-12 py-12 md:py-20 flex flex-col gap-24">
+
+        <!-- 1. Hero & Status -->
+        <section class="flex flex-col md:flex-row justify-between items-between gap-12">
+          <div class="max-w-2xl">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs font-bold text-emerald-500 tracking-widest uppercase">Operational</span>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-light tracking-tight leading-[0.9] mb-8">
+              Private.<br>
+              <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-500">Fast. Secure.</span>
+            </h1>
+            <p class="text-neutral-400 text-lg max-w-lg leading-relaxed">
+              추적 없는 인터넷을 경험하세요.<br>
+              광고 차단과 강력한 보안이 기본으로 제공됩니다.
+            </p>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#38bdf8,transparent)] opacity-20"></div>
-        </div>
-        <div class="container mx-auto px-4 py-8 md:py-12">
-          <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-white">Onet DNS</h1>
-            <p class="mt-2 text-slate-400">광고 차단 · 암호화 · Privacy-First 정책</p>
-          </header>
-          <div id="notice-slider-container" class="max-w-3xl mx-auto mb-8">
-            <div class="relative overflow-hidden group">
-              <div id="noticeSlider" class="flex items-start transition-transform duration-500 ease-in-out">
-                <div class="w-full flex-shrink-0">
-                  <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 text-center">
-                    <p>
-                      <span class="font-bold text-sky-400">📢 공지</span>: 안정적인 서비스 이용을 위해 보조 DNS 서버를 설정해 주세요.
-                    </p>
-                  </div>
-                </div>
-                <div class="w-full flex-shrink-0">
-                  <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 text-center">
-                    <p>
-                      <span class="font-bold text-yellow-400">⚠️ 주의</span>: DDos 공격 방지를 위해 과도한 요청 시 일시적으로 접속이 제한될 수 있습니다.
-                    </p>
-                  </div>
-                </div>
-                <div class="w-full flex-shrink-0">
-                  <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 text-center flex items-center justify-center gap-4">
-                    <span class="font-bold text-white">💬 문의</span>
-                    <a href="mailto:mail@onetwohour.com" class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full text-sm font-medium text-white transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                      </svg>Email </a>
-                    <a href="https://discord.gg/gp3w9w7XXj" class="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] px-3 py-1.5 rounded-full text-sm font-medium text-white transition-colors">
-                      <svg class="w-5 h-5" viewBox="0 0 126.644 96" xmlns="http://www.w3.org/2000/svg" fill="currentColor" role="img">
-                        <path xmlns="http://www.w3.org/2000/svg" id="Discord-Symbol-White" class="cls-1" d="M81.15,0c-1.2376,2.1973-2.3489,4.4704-3.3591,6.794-9.5975-1.4396-19.3718-1.4396-28.9945,0-.985-2.3236-2.1216-4.5967-3.3591-6.794-9.0166,1.5407-17.8059,4.2431-26.1405,8.0568C2.779,32.5304-1.6914,56.3725.5312,79.8863c9.6732,7.1476,20.5083,12.603,32.0505,16.0884,2.6014-3.4854,4.8998-7.1981,6.8698-11.0623-3.738-1.3891-7.3497-3.1318-10.8098-5.1523.9092-.6567,1.7932-1.3386,2.6519-1.9953,20.281,9.547,43.7696,9.547,64.0758,0,.8587.7072,1.7427,1.3891,2.6519,1.9953-3.4601,2.0457-7.0718,3.7632-10.835,5.1776,1.97,3.8642,4.2683,7.5769,6.8698,11.0623,11.5419-3.4854,22.3769-8.9156,32.0509-16.0631,2.626-27.2771-4.496-50.9172-18.817-71.8548C98.9811,4.2684,90.1918,1.5659,81.1752.0505l-.0252-.0505ZM42.2802,65.4144c-6.2383,0-11.4159-5.6575-11.4159-12.6535s4.9755-12.6788,11.3907-12.6788,11.5169,5.708,11.4159,12.6788c-.101,6.9708-5.026,12.6535-11.3907,12.6535ZM84.3576,65.4144c-6.2637,0-11.3907-5.6575-11.3907-12.6535s4.9755-12.6788,11.3907-12.6788,11.4917,5.708,11.3906,12.6788c-.101,6.9708-5.026,12.6535-11.3906,12.6535Z" />
-                      </svg>Discord </a>
-                  </div>
-                </div>
-                <div class="w-full flex-shrink-0">
-                  <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 text-center flex items-center justify-center gap-4">
-                    <span class="font-bold text-emerald-400">✨ 후원</span>
-                    <a href="https://www.buymeacoffee.com/onetwohour" target="_blank" class="inline-flex items-center gap-1 bg-[#10b981] text-white px-3 py-1.5 rounded-full text-sm hover:bg-[#059669] transition-colors" aria-label="Buy me a coffee">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 shrink-0" role="img" aria-hidden="true">
-                        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="24">☕️</text>
-                      </svg>
-                      <span class="leading-none">Buy me a coffee</span>
-                    </a>
-                  </div>
-                </div>
+
+          <div class="flex flex-col items-start md:items-end text-left md:text-right justify-end self-end">
+            <div class="mb-1 text-neutral-500 text-sm font-mono self-end">CONNECTION STATUS</div>
+            <div class="flex items-center gap-3">
+              <div id="status-dot" class="w-3 h-3 rounded-full bg-neutral-700"></div>
+              <span id="status-text" class="text-3xl font-medium">Checking...</span>
+            </div>
+            <div id="status-guide" class="hidden mt-2 self-end">
+              <a href="#" onclick="openPopup(); return false;" class="text-red-400 hover:text-red-300 text-sm border-b border-red-400/30 pb-0.5">
+                DNS가 설정되지 않았습니다
+              </a>
+            </div>
+            <button id="recheck-btn" class="mt-4 text-xs text-neutral-600 hover:text-white transition-colors uppercase tracking-widest self-end">
+              REFRESH STATUS
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. Statistics -->
+        <section class="border-t border-white/10 pt-12">
+          <div class="flex flex-col md:flex-row gap-12 md:gap-24">
+            <div class="flex-1">
+              <span class="block text-neutral-500 text-xs font-mono mb-2 uppercase">Total Queries (24h)</span>
+              <div class="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter rolling text-center md:text-left md:px-1 overflow-visible" id="dns-total">0</div>
+            </div>
+            <div class="flex gap-12 md:gap-24">
+              <div>
+                <span class="block text-neutral-500 text-xs font-mono mb-2 uppercase">Ads Blocked</span>
+                <div class="text-4xl font-light text-neutral-300 rolling" id="dns-blocked">0</div>
               </div>
-              <div id="sliderCtrls">
-                <button onclick="slide('prev')" class="absolute top-1/2 left-2 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600/80 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                  </svg>
-                </button>
-                <button onclick="slide('next')" class="absolute top-1/2 right-2 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600/80 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                  </svg>
-                </button>
+              <div>
+                <span class="block text-neutral-500 text-xs font-mono mb-2 uppercase">Ratio</span>
+                <div class="text-4xl font-light text-neutral-300"><span class="rolling" id="dns-ratio">0</span>
+                  <span class="text-xl text-neutral-600">%</span></div>
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            <div class="lg:col-span-2 space-y-8">
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg">
-                <h2 class="text-2xl font-bold text-white mb-4">DNS 서버 정보</h2>
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between bg-slate-800 p-4 rounded-lg">
-                    <div>
-                      <p class="text-sm text-slate-400">Node 1 (IPv4)</p>
-                      <p class="text-xl font-mono text-emerald-400">3.39.126.146</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <div class="flex items-center gap-2 text-sm">
-                        <div id="ping-dot-one" class="w-3 h-3 rounded-full bg-red-500 transition-colors"></div>
-                        <span id="ping-state-one" class="font-medium">Off</span>
-                      </div>
-                      <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="3.39.126.146" title="IP 복사">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between bg-slate-800 p-4 rounded-lg">
-                    <div>
-                      <p class="text-sm text-slate-400">Node 2 (IPv4)</p>
-                      <p class="text-xl font-mono text-emerald-400">15.165.111.52</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <div class="flex items-center gap-2 text-sm">
-                        <div id="ping-dot-two" class="w-3 h-3 rounded-full bg-red-500 transition-colors"></div>
-                        <span id="ping-state-two" class="font-medium">Off</span>
-                      </div>
-                      <button class="copy-btn p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="15.165.111.52" title="IP 복사">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg">
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center items-baseline">실시간 통계 <span class="text-sm text-gray-400 ml-2">/24h</span>
-                </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                  <div class="bg-slate-800 p-4 rounded-lg">
-                    <p class="text-sm text-slate-400 mb-1">총 요청</p>
-                    <p class="text-3xl font-bold text-sky-400 rolling" id="dns-total">0</p>
-                  </div>
-                  <div class="bg-slate-800 p-4 rounded-lg">
-                    <p class="text-sm text-slate-400 mb-1">차단된 요청</p>
-                    <p class="text-3xl font-bold text-red-400 rolling" id="dns-blocked">0</p>
-                  </div>
-                  <div class="bg-slate-800 p-4 rounded-lg">
-                    <p class="text-sm text-slate-400 mb-1">차단율</p>
-                    <p class="text-3xl font-bold text-red-400">
-                      <span class="rolling" id="dns-ratio">0</span>
-                      <span class="text-xl">%</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg">
-                <h2 class="text-2xl font-bold text-white mb-4">연결 상태 확인</h2>
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between bg-slate-800 p-4 rounded-lg">
-                    <div class="flex items-center gap-3">
-                      <div id="status-dot" class="w-4 h-4 rounded-full bg-yellow-500 transition-colors animate-pulse"></div>
-                      <p id="status-text" class="text-lg font-bold text-yellow-400">확인 중...</p>
-                    </div>
-                    <button id="recheck-btn" class="p-2 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div id="status-guide" class="text-sm text-center pt-2 hidden">
-                    <p>Onet DNS가 설정되지 않았습니다. <a href="#" onclick="openPopup(); return false;" class="text-sky-400 hover:underline font-bold">설정 가이드</a>를 확인해 주세요. </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="space-y-8">
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg">
-                <h2 class="text-2xl font-bold text-white mb-4">지원 프로토콜</h2>
-                <div class="grid grid-cols-2 gap-3">
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="3.39.126.146&#10;15.165.111.52" title="TCP/UDP 복사">TCP/UDP</button>
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="https://one.dns.onetwohour.com/dns-query&#10;https://two.dns.onetwohour.com/dns-query" title="DoH 복사">DoH</button>
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="tls://one.dns.onetwohour.com&#10;tls://two.dns.onetwohour.com" title="DoT 복사">DoT</button>
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="quic://one.dns.onetwohour.com&#10;quic://two.dns.onetwohour.com" title="DoQ 복사">DoQ</button>
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="h3://one.dns.onetwohour.com/dns-query&#10;h3://two.dns.onetwohour.com/dns-query" title="HTTP/3 복사">HTTP/3</button>
-                  <button class="copy-btn-text w-full text-center py-2 px-3 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t&#10;sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ" title="DNSCrypt 복사">DNSCrypt</button>
-                </div>
-              </div>
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg text-center">
-                <h2 class="text-2xl font-bold text-white mb-1">Zero Query Logs</h2>
-                <p class="text-slate-400 mb-4">사용자의 프라이버시를 최우선으로 생각합니다.</p>
-                <button id="guideBtn" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-sky-500/20"> 설정 가이드 보기 </button>
-              </div>
-              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col items-center text-center gap-3">
-                <div class="flex items-center justify-center text-sky-400 text-3xl mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 114 0v2m-6 4h8a2 2 0 002-2v-4a8 8 0 10-12 0v4a2 2 0 002 2z" />
-                  </svg>
-                  <span class="font-semibold text-xl">DNS란?</span>
-                </div>
-                <p class="text-slate-300 leading-relaxed"> DNS는 <span class="font-bold text-white">도메인 이름</span>을 <span class="font-bold text-white">IP 주소</span>로 바꿔주는 <span class="text-sky-400 font-bold">인터넷의 전화번호부</span>입니다. <br> 보안이 강화된 DNS를 사용하면 <span class="font-bold text-emerald-400">중간자 공격</span>과 <span class="font-bold text-emerald-400">위조 응답</span>을 효과적으로 차단하여, <span class="font-bold text-white">개인정보를 안전하게 보호</span>할 수 있습니다. </p>
-              </div>
-            </div>
+        </section>
+
+        <!-- 3. Nodes -->
+        <section class="flex flex-col md:flex-row gap-12 md:gap-24 border-t border-white/10 pt-12">
+          <div class="md:w-1/3">
+            <h3 class="text-2xl font-medium mb-2">Access Nodes</h3>
+            <p class="text-neutral-500 text-sm">한국 리전에 위치한 고성능 노드입니다.</p>
           </div>
-        </div>
-        <div id="popupCard" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl relative">
-            <div class="flex justify-between items-center p-4 border-b border-slate-700">
-              <h2 class="text-xl font-bold text-white">설정 가이드</h2>
-              <button onclick="closePopup()" class="p-2 rounded-full hover:bg-slate-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" />
-                </svg>
+          <div class="md:w-2/3 flex flex-col gap-8">
+            <!-- Node 1 -->
+            <div class="group flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-2 border-b border-white/5 hover:border-white/20 transition-colors">
+              <div>
+                <div class="flex items-center gap-3 mb-1 flex-wrap">
+                  <span class="font-bold text-lg whitespace-nowrap">Node 01</span>
+                  <!-- Recommended Badge -->
+                  <span id="badge-one" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-black tracking-wide whitespace-nowrap">RECOMMENDED</span>
+                  
+                  <div class="flex items-center gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity basis-full">
+                     <div id="ping-dot-one" class="w-1.5 h-1.5 rounded-full bg-neutral-600"></div>
+                     <span id="ping-state-one" class="text-[10px] uppercase text-neutral-500">Checking</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn w-full group-hover:text-emerald-400 transition-colors text-right md:text-right" data-copy="3.39.126.146">
+                <code class="block text-2xl md:text-3xl font-light tracking-tight">3.39.126.146</code>
+                <span class="block text-[10px] text-neutral-600 uppercase mt-1 opacity-0 group-hover:opacity-100">Click to Copy</span>
               </button>
             </div>
-            <div class="popup-content p-2 sm:p-4">
-              <div class="flex flex-wrap justify-center gap-2 p-2 mb-4 bg-slate-800 rounded-lg">
-                <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 text-slate-300" data-target="tab-android">Android</button>
-                <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 text-slate-300" data-target="tab-windows">Windows</button>
-                <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 text-slate-300" data-target="tab-ios">iOS</button>
-                <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 text-slate-300" data-target="tab-macos">macOS</button>
-                <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 text-slate-300" data-target="tab-adguard">AdGuard</button>
-              </div>
-              <div class="px-2 sm:px-4">
-                <div class="tab-content" id="tab-android">
-                  <ul class="space-y-3 text-slate-300 text-sm">
-                    <li>
-                      <strong>설정</strong> → 연결 → 기타 연결 설정 → <strong>프라이빗 DNS</strong>로 이동합니다.
-                    </li>
-                    <li>'프라이빗 DNS 공급자 호스트 이름'을 선택하고 아래 주소 중 하나를 입력하세요.</li>
-                    <li class="bg-slate-800 p-3 rounded-lg flex">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64" />
-                      </svg>
-                      <p class="font-semibold mb-1 w-16 shrink-0">Node 1:</p>
-                      <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="one.dns.onetwohour.com">one.dns.onetwohour.com</code>
-                    </li>
-                    <li class="bg-slate-800 p-3 rounded-lg flex">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
-                      </svg>
-                      <p class="font-semibold mb-1 w-16 shrink-0">Node 2:</p>
-                      <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="two.dns.onetwohour.com">two.dns.onetwohour.com</code>
-                    </li>
-                  </ul>
-                </div>
-                <div class="tab-content hidden" id="tab-windows">
-                  <p class="text-sm text-slate-400 mb-4">Windows 11 및 최신 Windows 10 사용자는 보안을 위해 <strong>암호화된 DNS(DoH) 설정</strong>을 권장합니다. </p>
-                  <div class="space-y-4">
-                    <details class="bg-slate-800 rounded-lg overflow-hidden">
-                      <summary class="font-semibold text-white p-3 cursor-pointer hover:bg-slate-700 flex justify-between items-center">
-                        <span>1. 암호화된 DNS (DoH) 설정</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                        </svg>
-                      </summary>
-                      <div class="p-4 border-t border-slate-700 text-sm space-y-4">
-                        <ol class="list-decimal list-inside space-y-2">
-                          <li>
-                            <strong>설정 → 네트워크 및 인터넷 → Wi-Fi/이더넷 → 하드웨어 속성</strong>으로 이동
-                          </li>
-                          <li>
-                            <strong>DNS 서버 할당</strong> 옆의 <strong>[편집]</strong> 버튼 클릭
-                          </li>
-                          <li>아래 정보를 입력하고 저장하세요.</li>
-                        </ol>
-                        <div class="bg-slate-900 p-4 rounded-lg space-y-4">
-                          <div>
-                            <h4 class="font-semibold mb-2 flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64" />
-                              </svg>
-                              <span>Node 1</span>
-                            </h4>
-                            <div class="space-y-2">
-                              <div class="flex items-center">
-                                <span class="w-28 text-slate-400 shrink-0">IPv4:</span>
-                                <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="3.39.126.146">3.39.126.146</code>
-                              </div>
-                              <div class="flex items-start">
-                                <span class="w-28 text-slate-400 shrink-0">HTTPS 템플릿:</span>
-                                <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <h4 class="font-semibold mb-2 flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
-                              </svg>
-                              <span>Node 2</span>
-                            </h4>
-                            <div class="space-y-2">
-                              <div class="flex items-center">
-                                <span class="w-28 text-slate-400 shrink-0">IPv4:</span>
-                                <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="15.165.111.52">15.165.111.52</code>
-                              </div>
-                              <div class="flex items-start">
-                                <span class="w-28 text-slate-400 shrink-0">HTTPS 템플릿:</span>
-                                <code class="copy-dns text-emerald-400 hover:underline cursor-pointer break-all" style="max-width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </details>
-                    <details class="bg-slate-800 rounded-lg overflow-hidden">
-                      <summary class="font-semibold text-white p-3 cursor-pointer hover:bg-slate-700 flex justify-between items-center">
-                        <span>2. 레거시 IP 주소 설정 (구형 Windows)</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="img">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                        </svg>
-                      </summary>
-                      <div class="p-4 border-t border-slate-700 text-sm space-y-4">
-                        <ol class="list-decimal list-inside space-y-2">
-                          <li>
-                            <b>경로:</b> 제어판 → 네트워크 및 인터넷 → 네트워크 및 공유 센터
-                          </li>
-                          <li>어댑터 설정 변경 → 사용 중인 연결 우클릭 → 속성</li>
-                          <li>인터넷 프로토콜 버전 4(TCP/IPv4) 선택 후 속성</li>
-                          <li>
-                            <b>"다음 DNS 서버 주소 사용"</b> 선택 후 아래 IP 입력:
-                          </li>
-                        </ol>
-                        <div class="bg-slate-900 p-4 rounded-lg space-y-2">
-                          <div class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1 text-slate-400">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64" />
-                            </svg>
-                            <span class="w-20 text-slate-400 shrink-0 mr-2">Node 1:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="3.39.126.146">3.39.126.146</code>
-                          </div>
-                          <div class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1 text-slate-400">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
-                            </svg>
-                            <span class="w-20 text-slate-400 shrink-0 mr-2">Node 2:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" data-copy="15.165.111.52">15.165.111.52</code>
-                          </div>
-                        </div>
-                      </div>
-                    </details>
+            <!-- Node 2 -->
+            <div class="group flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-2 border-b border-white/5 hover:border-white/20 transition-colors">
+              <div>
+                <div class="flex items-center gap-3 mb-1 flex-wrap">
+                  <span class="font-bold text-lg whitespace-nowrap">Node 02</span>
+                  <!-- Recommended Badge -->
+                  <span id="badge-two" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500 text-white tracking-wide whitespace-nowrap">RECOMMENDED</span>
+
+                  <div class="flex items-center gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity basis-full">
+                    <div id="ping-dot-two" class="w-1.5 h-1.5 rounded-full bg-neutral-600"></div>
+                    <span id="ping-state-two" class="text-[10px] uppercase text-neutral-500">Checking</span>
                   </div>
                 </div>
-                <div class="tab-content hidden" id="tab-ios">
-                  <ul class="space-y-3 text-slate-300 text-sm">
-                    <li>iOS 14 이상에서 아래 프로필을 다운로드하여 설치하세요.</li>
-                    <li class="bg-slate-800 p-3 rounded-lg">
-                      <a href="./OnetDNS-Node1.mobileconfig" class="flex items-center font-semibold text-sky-400 hover:underline" target="_blank">
-                        <svg data-slot="icon" fill="none" stroke-width="1.5" class="h-5 w-5 transition-transform duration-200 mr-2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
-                        </svg>
-                        <span class="whitespace-nowrap">Node 1 프로필 다운로드</span>
-                      </a>
-                    </li>
-                    <li class="bg-slate-800 p-3 rounded-lg">
-                      <a href="./OnetDNS-Node2.mobileconfig" class="font-semibold text-sky-400 hover:underline flex items-center" target="_blank">
-                        <svg data-slot="icon" fill="none" stroke-width="1.5" class="h-5 w-5 transition-transform duration-200 mr-2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
-                        </svg>
-                        <span class="whitespace-nowrap">Node 2 프로필 다운로드</span>
-                      </a>
-                    </li>
-                    <li>
-                      <strong>설정 → 일반 → VPN 및 기기 관리</strong>에서 설치된 프로필을 활성화합니다.
-                    </li>
-                  </ul>
-                </div>
-                <div class="tab-content hidden" id="tab-macos">
-                  <ul class="space-y-3 text-slate-300 text-sm">
-                    <li>macOS Big Sur 이상에서 아래 프로필을 다운로드하여 설치하세요.</li>
-                    <li class="bg-slate-800 p-3 rounded-lg">
-                      <a href="./OnetDNS-Node1.mobileconfig" class="flex items-center font-semibold text-sky-400 hover:underline" target="_blank">
-                        <svg data-slot="icon" fill="none" stroke-width="1.5" class="h-5 w-5 transition-transform duration-200 mr-2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
-                        </svg>
-                        <span class="whitespace-nowrap">Node 1 프로필 다운로드</span>
-                      </a>
-                    </li>
-                    <li class="bg-slate-800 p-3 rounded-lg">
-                      <a href="./OnetDNS-Node2.mobileconfig" class="font-semibold text-sky-400 hover:underline flex items-center" target="_blank">
-                        <svg data-slot="icon" fill="none" stroke-width="1.5" class="h-5 w-5 transition-transform duration-200 mr-2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
-                        </svg>
-                        <span class="whitespace-nowrap">Node 2 프로필 다운로드</span>
-                      </a>
-                    </li>
-                    <li>
-                      <strong>시스템 설정 → 프로파일</strong>에서 설치된 프로필을 활성화합니다.
-                    </li>
-                  </ul>
-                </div>
-                <div class="tab-content hidden" id="tab-adguard">
-                  <ul class="space-y-3 text-slate-300 text-sm">
-                    <li>
-                      <strong>AdGuard → DNS 보호 → DNS 서버 선택 → 사용자 정의 서버 추가</strong>로 이동합니다.
-                    </li>
-                    <li>아래 주소 중 원하는 프로토콜의 주소를 복사하여 추가하세요.</li>
-                    <li class="bg-slate-800 p-4 rounded-lg space-y-4">
-                      <div>
-                        <h4 class="font-semibold mb-2 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64" />
-                          </svg>
-                          <span class="whitespace-nowrap tabular-nums">Node 1 <code class="text-sm font-normal text-slate-400">(one.dns.onetwohour.com)</code>
-                          </span>
-                        </h4>
-                        <div class="space-y-2 pl-2">
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoH:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="https://one.dns.onetwohour.com/dns-query">https://one.dns.onetwohour.com/dns-query</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoT:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="tls://one.dns.onetwohour.com">tls://one.dns.onetwohour.com</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoQ:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="quic://one.dns.onetwohour.com">quic://one.dns.onetwohour.com</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">HTTP/3:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="h3://one.dns.onetwohour.com/dns-query">h3://one.dns.onetwohour.com/dns-query</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DNSCrypt:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t">sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t</code>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold mb-2 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-transform duration-200 mr-1">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
-                          </svg>
-                          <span class="whitespace-nowrap tabular-nums">Node 2 <code class="text-sm font-normal text-slate-400">(two.dns.onetwohour.com)</code>
-                          </span>
-                        </h4>
-                        <div class="space-y-2 pl-2">
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoH:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="https://two.dns.onetwohour.com/dns-query">https://two.dns.onetwohour.com/dns-query</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoT:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="tls://two.dns.onetwohour.com">tls://two.dns.onetwohour.com</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DoQ:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="quic://two.dns.onetwohour.com">quic://two.dns.onetwohour.com</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">HTTP/3:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="h3://two.dns.onetwohour.com/dns-query">h3://two.dns.onetwohour.com/dns-query</code>
-                          </div>
-                          <div class="flex items-start">
-                            <span class="w-20 text-slate-400 shrink-0">DNSCrypt:</span>
-                            <code class="copy-dns text-emerald-400 hover:underline cursor-pointer" style="flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" data-copy="sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ">sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ</code>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
               </div>
+              <button class="copy-btn w-full group-hover:text-indigo-400 transition-colors text-right md:text-right" data-copy="15.165.111.52">
+                <code class="text-2xl md:text-3xl font-light tracking-tight">15.165.111.52</code>
+                <span class="block text-[10px] text-neutral-600 uppercase mt-1 opacity-0 group-hover:opacity-100">Click to Copy</span>
+              </button>
             </div>
           </div>
+        </section>
+
+        <!-- 4. Protocols & AI -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 border-t border-white/10 pt-12">
+          <div>
+            <h3 class="text-xl font-medium mb-6">Protocols</h3>
+            <div class="flex flex-wrap gap-3">
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="3.39.126.146&#10;15.165.111.52">UDP / TCP</button>
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="https://one.dns.onetwohour.com/dns-query&#10;https://two.dns.onetwohour.com/dns-query">DNS over HTTPS</button>
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="tls://one.dns.onetwohour.com&#10;tls://two.dns.onetwohour.com">DNS over TLS</button>
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="quic://one.dns.onetwohour.com&#10;quic://two.dns.onetwohour.com">DNS over QUIC</button>
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="h3://one.dns.onetwohour.com/dns-query&#10;h3://two.dns.onetwohour.com/dns-query">HTTP/3</button>
+               <button class="copy-btn-text px-4 py-2 bg-neutral-900/50 hover:bg-white/10 rounded-full border border-white/5 hover:border-white/20 transition-all text-sm text-neutral-300" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t&#10;sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ">DNSCrypt</button>
+            </div>
+            <div class="mt-8">
+               <h3 class="text-xl font-medium mb-2">Zero Logs</h3>
+               <p class="text-neutral-500 text-sm leading-relaxed">
+                  우리는 어떤 쿼리 기록도 저장하지 않습니다.<br>
+                  사용자의 프라이버시가 우리의 최우선 가치입니다.
+                </p>
+              </div>
+              <a href="#" id="guideBtn" class="block mt-4 pt-4 border-t border-white/10 text-white underline underline-offset-4 decoration-neutral-700 hover:decoration-white transition-all">설정 가이드</a>
+          </div>
+
+          <div class="flex flex-col justify-between">
+             <div>
+                <h3 class="text-xl font-medium mb-1">What is DNS?</h3>
+                <p class="text-xs text-neutral-500 mb-6">Powered by Google Gemini</p>
+                <div class="relative">
+                   <input type="text" id="ai-query-input" placeholder="보안이나 DNS에 대해 물어보세요..." 
+                      class="w-full bg-transparent border-b border-white/20 py-4 text-lg text-white placeholder-neutral-700 focus:outline-none focus:border-white transition-colors">
+                   <button id="ai-query-btn" class="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-neutral-500 hover:text-white transition-colors">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                   </button>
+                </div>
+                <div id="ai-response-area" class="mt-6 hidden animate-in fade-in slide-in-from-bottom-2">
+                   <p id="ai-response-text" class="text-neutral-300 text-sm leading-relaxed"></p>
+                </div>
+             </div>
+             
+             <div id="notice-slider-container" class="mt-12 overflow-hidden h-6 relative">
+                 <div id="noticeSlider" class="flex flex-col transition-transform duration-500">
+                    <div class="h-6 flex items-center gap-2 text-xs text-neutral-500">
+                       <span class="w-1.5 h-1.5 bg-neutral-600 rounded-full"></span>
+                       NOTICE: 안정적인 서비스를 위해 보조 DNS도 설정해주세요.
+                    </div>
+                    <div class="h-6 flex items-center gap-2 text-xs text-neutral-500">
+                       <span class="w-1.5 h-1.5 bg-amber-600 rounded-full"></span>
+                       WARNING: 비정상 트래픽 감지 시 차단될 수 있습니다.
+                    </div>
+                 </div>
+             </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="w-full py-8 text-center border-t border-white/5">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-neutral-600 uppercase tracking-widest gap-4">
+           <p>&copy; 2025 Onet DNS. All Rights Reserved.</p>
+           <div class="flex gap-6">
+              <a href="mailto:mail@onetwohour.com" class="hover:text-white transition-colors">Contact</a>
+              <a href="https://github.com/onetwohour/onetdns" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+              <a href="https://discord.gg/gp3w9w7XXj" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Discord</a>
+              <a href="https://www.buymeacoffee.com/onetwohour" target="_blank" class="hover:text-white transition-colors">Sponsor</a>
+           </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Setup Guide Popup (Fully Restored) -->
+    <div id="popupCard" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div class="w-full max-w-2xl bg-[#0a0a0a] border border-white/10 p-8 md:p-12 relative shadow-2xl overflow-y-auto max-h-[90vh]">
+        <button onclick="closePopup()" class="absolute top-6 right-6 text-neutral-500 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        
+        <h2 class="text-3xl font-light mb-8 text-white">Setup Guide</h2>
+        
+        <div class="flex gap-8 border-b border-white/10 mb-8 overflow-x-auto pb-2 no-scrollbar">
+           <button class="tab-btn active text-lg whitespace-nowrap" data-target="tab-android">Android</button>
+           <button class="tab-btn text-lg whitespace-nowrap" data-target="tab-windows">Windows</button>
+           <button class="tab-btn text-lg whitespace-nowrap" data-target="tab-ios">iOS</button>
+           <button class="tab-btn text-lg whitespace-nowrap" data-target="tab-macos">macOS</button>
+           <button class="tab-btn text-lg whitespace-nowrap" data-target="tab-adguard">AdGuard</button>
+        </div>
+
+        <div class="text-sm text-neutral-300 leading-relaxed min-h-[250px]">
+           
+           <!-- Android -->
+           <div class="tab-content" id="tab-android">
+              <div class="mb-6 p-4 border border-white/10 bg-white/5 rounded">
+                 <ol class="list-decimal list-inside space-y-2 text-neutral-400">
+                  <li><strong>설정</strong> &rarr; 연결 &rarr; 기타 연결 설정 &rarr; <strong>프라이빗 DNS</strong></li>
+                  <li><strong>프라이빗 DNS 공급자 호스트 이름</strong> 선택</li>
+                  <li>아래 주소 중 하나를 입력 후 저장</li>
+                 </ol>
+              </div>
+              <div class="flex flex-col gap-6">
+                 <div class="group cursor-pointer copy-dns" data-copy="one.dns.onetwohour.com">
+                    <p class="text-xs font-bold text-neutral-600 uppercase mb-1">Primary Node</p>
+                    <p class="text-xl font-light border-b border-white/10 group-hover:border-white group-hover:text-white transition-all inline-block pb-1">one.dns.onetwohour.com</p>
+                 </div>
+                 <div class="group cursor-pointer copy-dns" data-copy="two.dns.onetwohour.com">
+                    <p class="text-xs font-bold text-neutral-600 uppercase mb-1">Secondary Node</p>
+                    <p class="text-xl font-light border-b border-white/10 group-hover:border-white group-hover:text-white transition-all inline-block pb-1">two.dns.onetwohour.com</p>
+                 </div>
+              </div>
+           </div>
+           
+           <!-- Windows -->
+           <div class="tab-content hidden" id="tab-windows">
+              <p class="mb-6 p-3 border border-blue-500/30 bg-blue-500/10 text-blue-300 rounded">
+                💡 Windows 11 및 최신 Windows 10은 <strong>DoH (DNS over HTTPS)</strong> 사용을 권장합니다.
+              </p>
+              
+              <details class="group border-b border-white/10 pb-4 mb-4">
+                 <summary class="flex justify-between items-center cursor-pointer text-lg font-medium hover:text-white transition-colors py-2">
+                    1. 암호화된 DNS (DoH) 설정
+                    <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/></svg>
+                 </summary>
+                 <div class="pt-4 pl-2 space-y-6">
+                    <ol class="list-decimal list-inside space-y-1 text-neutral-500 mb-4">
+                       <li>설정 &rarr; 네트워크 및 인터넷 &rarr; Wi-Fi/이더넷 &rarr; 하드웨어 속성</li>
+                       <li>DNS 서버 할당 [편집] 클릭</li>
+                       <li>아래 정보를 입력하세요</li>
+                    </ol>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <div>
+                          <p class="text-white font-bold mb-2">Node 1</p>
+                          <p class="font-mono text-neutral-400 mb-1 copy-dns cursor-pointer hover:text-white" data-copy="3.39.126.146">IPv4: 3.39.126.146</p>
+                          <p class="font-mono text-neutral-600 text-xs break-all copy-dns cursor-pointer hover:text-neutral-400" data-copy="https://one.dns.onetwohour.com/dns-query">HTTPS: https://one.dns.onetwohour.com/dns-query</p>
+                       </div>
+                       <div>
+                          <p class="text-white font-bold mb-2">Node 2</p>
+                          <p class="font-mono text-neutral-400 mb-1 copy-dns cursor-pointer hover:text-white" data-copy="15.165.111.52">IPv4: 15.165.111.52</p>
+                          <p class="font-mono text-neutral-600 text-xs break-all copy-dns cursor-pointer hover:text-neutral-400" data-copy="https://two.dns.onetwohour.com/dns-query">HTTPS: https://two.dns.onetwohour.com/dns-query</p>
+                       </div>
+                    </div>
+                 </div>
+              </details>
+
+              <details class="group border-b border-white/10 pb-4">
+                 <summary class="flex justify-between items-center cursor-pointer text-lg font-medium hover:text-white transition-colors py-2">
+                    2. 레거시 IP 설정 (구형 OS)
+                    <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/></svg>
+                 </summary>
+                 <div class="pt-4 pl-2">
+                    <p class="mb-4 text-neutral-500">제어판 &rarr; 네트워크 및 공유 센터 &rarr; 어댑터 설정 변경 &rarr; 속성 &rarr; TCP/IPv4</p>
+                    <div class="space-y-2 font-mono">
+                       <div class="flex justify-between border-b border-white/5 pb-2">
+                          <span class="text-neutral-500">기본 설정 DNS</span>
+                          <span class="text-emerald-400 cursor-pointer copy-dns hover:text-white" data-copy="3.39.126.146">3.39.126.146</span>
+                       </div>
+                       <div class="flex justify-between pt-2">
+                          <span class="text-neutral-500">보조 DNS</span>
+                          <span class="text-indigo-400 cursor-pointer copy-dns hover:text-white" data-copy="15.165.111.52">15.165.111.52</span>
+                       </div>
+                    </div>
+                 </div>
+              </details>
+           </div>
+
+           <!-- iOS -->
+           <div class="tab-content hidden" id="tab-ios">
+              <p class="mb-6 text-neutral-400">iOS 14 이상에서는 <strong>구성 프로파일</strong>을 설치하여 시스템 전체에 암호화된 DNS를 적용할 수 있습니다.</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <a href="./OnetDNS-Node1.mobileconfig" target="_blank" class="border border-white/20 p-6 hover:bg-white hover:text-black transition-colors text-center group">
+                     <span class="block font-bold text-lg mb-1">Node 1 Profile</span>
+                     <span class="block mt-4 text-sm underline">Download</span>
+                  </a>
+                  <a href="./OnetDNS-Node2.mobileconfig" target="_blank" class="border border-white/20 p-6 hover:bg-white hover:text-black transition-colors text-center group">
+                     <span class="block font-bold text-lg mb-1">Node 2 Profile</span>
+                     <span class="block mt-4 text-sm underline">Download</span>
+                  </a>
+              </div>
+              <p class="text-xs text-neutral-500 text-center">
+                 다운로드 후 <strong>설정 &rarr; 일반 &rarr; VPN 및 기기 관리</strong>에서 프로파일을 설치해야 적용됩니다.
+              </p>
+           </div>
+
+           <!-- macOS -->
+           <div class="tab-content hidden" id="tab-macos">
+              <p class="mb-6 text-neutral-400">macOS Big Sur 이상 지원. 아래 프로파일을 다운로드하여 설치하세요.</p>
+              <div class="grid grid-cols-1 gap-4">
+                  <a href="./OnetDNS-Node1.mobileconfig" target="_blank" class="flex items-center justify-between border border-white/20 p-4 hover:bg-white hover:text-black transition-colors group">
+                     <div>
+                        <span class="block font-bold">Node 1 Profile</span>
+                     </div>
+                     <span class="text-sm">Download &darr;</span>
+                  </a>
+                  <a href="./OnetDNS-Node2.mobileconfig" target="_blank" class="flex items-center justify-between border border-white/20 p-4 hover:bg-white hover:text-black transition-colors group">
+                     <div>
+                        <span class="block font-bold">Node 2 Profile</span>
+                     </div>
+                     <span class="text-sm">Download &darr;</span>
+                  </a>
+              </div>
+              <p class="mt-6 text-xs text-neutral-500">
+                 설치 후 <strong>시스템 설정 &rarr; 개인정보 보호 및 보안 &rarr; 프로파일</strong>에서 확인하세요.
+              </p>
+           </div>
+
+           <!-- AdGuard -->
+           <div class="tab-content hidden" id="tab-adguard">
+              <p class="mb-6 text-neutral-400"><strong>AdGuard &rarr; DNS 보호 &rarr; 사용자 정의 서버</strong>에 아래 주소를 추가하세요.</p>
+              <div class="space-y-8">
+                 <div>
+                    <div class="flex items-center gap-2 mb-2">
+                       <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                       <span class="font-bold text-white">Node 1</span>
+                    </div>
+                    <div class="space-y-3 pl-4 border-l border-white/10">
+                       <div class="group cursor-pointer copy-dns" data-copy="https://one.dns.onetwohour.com/dns-query">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-HTTPS</p>
+                          <p class="font-mono text-emerald-400 text-sm break-all group-hover:text-white transition-colors">https://one.dns.onetwohour.com/dns-query</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="tls://one.dns.onetwohour.com">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-TLS</p>
+                          <p class="font-mono text-emerald-400 text-sm group-hover:text-white transition-colors">tls://one.dns.onetwohour.com</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="quic://one.dns.onetwohour.com">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-QUIC</p>
+                          <p class="font-mono text-emerald-400 text-sm group-hover:text-white transition-colors">quic://one.dns.onetwohour.com</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="h3://one.dns.onetwohour.com/dns-query">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-HTTP/3</p>
+                          <p class="font-mono text-emerald-400 text-sm break-all group-hover:text-white transition-colors">h3://one.dns.onetwohour.com/dns-query</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t">
+                          <p class="text-xs text-neutral-500 mb-1">DNSCrypt</p>
+                          <p class="font-mono text-emerald-400 text-sm truncate group-hover:text-white transition-colors">sdns://AQcAAAAAAAAAETMuMzkuMTI2LjE0Njo1NDQzICRPcENhGUJwJSNZyUTsMBLsqVKpB_bfbv_63qHNx86LJjIuZG5zY3J5cHQtY2VydC5vbmUuZG5zLm9uZXR3b2hvdXIuY29t</p>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div>
+                    <div class="flex items-center gap-2 mb-2">
+                       <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                       <span class="font-bold text-white">Node 2</span>
+                    </div>
+                    <div class="space-y-3 pl-4 border-l border-white/10">
+                       <div class="group cursor-pointer copy-dns" data-copy="https://two.dns.onetwohour.com/dns-query">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-HTTPS</p>
+                          <p class="font-mono text-indigo-400 text-sm break-all group-hover:text-white transition-colors">https://two.dns.onetwohour.com/dns-query</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="tls://two.dns.onetwohour.com">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-TLS</p>
+                          <p class="font-mono text-indigo-400 text-sm group-hover:text-white transition-colors">tls://two.dns.onetwohour.com</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="quic://two.dns.onetwohour.com">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-QUIC</p>
+                          <p class="font-mono text-indigo-400 text-sm group-hover:text-white transition-colors">quic://two.dns.onetwohour.com</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="h3://two.dns.onetwohour.com/dns-query">
+                          <p class="text-xs text-neutral-500 mb-1">DNS-over-HTTP/3</p>
+                          <p class="font-mono text-indigo-400 text-sm break-all group-hover:text-white transition-colors">h3://two.dns.onetwohour.com/dns-query</p>
+                       </div>
+                       <div class="group cursor-pointer copy-dns" data-copy="sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ">
+                          <p class="text-xs text-neutral-500 mb-1">DNSCrypt</p>
+                          <p class="font-mono text-indigo-400 text-sm truncate group-hover:text-white transition-colors">sdns://AQcAAAAAAAAAEjE1LjE2NS4xMTEuNTI6NTQ0MyD2cVyG4KhEQl8gMA8I0mdbF9fdFpIhB2LrfqXuAd8PLSYyLmRuc2NyeXB0LWNlcnQudHdvLmRucy5vbmV0d29ob3VyLmNvbQ</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
         </div>
       </div>
     </div>
-    <script type="module" src="/client.js"></script>
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50"> 복사됨! </div>
-    <footer class="text-center text-slate-500 text-sm mt-16 pb-8" id="footer">
-      <p>👤 <span class="font-semibold">onetwohour</span> | ✉️ <a href="mailto:mail@onetwohour.com" class="underline hover:text-sky-400">E-mail</a> | 🌐 <a href="https://github.com/onetwohour/onetdns" target="_blank" class="underline hover:text-sky-400">GitHub</a>
-      </p>
-      <p class="mt-2 text-xs text-slate-600">© <span id="current-year">2025</span> Onet DNS. All Rights Reserved.</p>
-      <p class="mt-2 text-xs text-slate-600">Powered by Tailwind CSS & Heroicons, Inter & Pretendard</p>
-    </footer>
+
+    <!-- Scripts -->
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const yearEl = document.getElementById('current-year');
-        if (yearEl) yearEl.textContent = new Date().getFullYear();
+    const app = document.getElementById('app');
+
+    async function mount() {
+      app.style.display = 'block';
+      app.style.visibility = "visible";
+      const ns = document.querySelector(".noscript-container");
+      if(ns) ns.style.visibility = "hidden";
+      if (typeof boot === 'function') boot();
+    }
+
+    function boot() {
+      const guideBtn     = document.getElementById("guideBtn");
+      const popupCard    = document.getElementById("popupCard");
+      const noticeSlider = document.getElementById("noticeSlider");
+      const toast        = document.getElementById("toast");
+      const statusDot    = document.getElementById('status-dot');
+      const statusText   = document.getElementById('status-text');
+      const statusGuide  = document.getElementById('status-guide');
+      const recheckBtn   = document.getElementById('recheck-btn');
+
+      function initAI() {
+        const aiInput = document.getElementById('ai-query-input');
+        const aiBtn = document.getElementById('ai-query-btn');
+        const aiResponseArea = document.getElementById('ai-response-area');
+        const aiResponseText = document.getElementById('ai-response-text');
+
+        async function callGemini(prompt) {
+          if (!prompt.trim()) return;
+          
+          const originalBtnHtml = aiBtn.innerHTML;
+          aiBtn.innerHTML = '<svg class="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+          aiBtn.disabled = true;
+          aiResponseArea.classList.remove('hidden');
+          aiResponseText.innerHTML = '<span class="animate-pulse text-neutral-500">Thinking...</span>';
+
+          try {
+            const response = await fetch("/.netlify/functions/gemini", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt }),
+            });
+            if (!response.ok) throw new Error('API Request Failed');
+
+            const data = await response.json();
+            const rawText = data.text || "죄송합니다. 답변을 생성하지 못했습니다.";
+            if (window.marked) {
+              marked.setOptions({ breaks: true });
+              const html = marked.parse(rawText).replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
+              aiResponseText.classList.add("prose", "prose-invert", "max-w-none");
+              aiResponseText.innerHTML = html;
+            } else {
+              const formattedText = rawText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
+              aiResponseText.innerHTML = formattedText;
+            }
+          } catch (error) {
+            console.error(error);
+            aiResponseText.textContent = "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+          } finally {
+            aiBtn.innerHTML = originalBtnHtml;
+            aiBtn.disabled = false;
+          }
+        }
+
+        aiBtn.addEventListener('click', () => callGemini(aiInput.value));
+        aiInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') callGemini(aiInput.value);
+        });
+      }
+      initAI();
+
+      const has = (...els) => els.every(Boolean);
+
+      function generateRandomString(len){
+        const chars='abcdefghijklmnopqrstuvwxyz0123456789';
+        let out=''; for (let i=0;i<len;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+        return out;
+      }
+      async function checkDnsStatus() {
+        if (!has(statusDot, statusText, statusGuide)) return;
+        statusDot.className = 'w-3 h-3 rounded-full bg-yellow-500 transition-colors animate-pulse';
+        statusText.textContent = 'Checking...';
+        statusText.className = 'text-3xl font-medium text-yellow-400';
+        statusGuide.classList.add('hidden');
+
+        const verificationHost = `${generateRandomString(32)}.t.e.s.t.onetwohour.com`;
+        let ok = false;
+        try {
+          const r = await fetch(`https://${verificationHost}/check`, { cache:'no-store' });
+          if (r.ok) {
+            const data = await r.json();
+            ok = data && data.dns === 'dns.onetwohour.com';
+          }
+        } catch {}
+
+        statusDot.classList.remove('animate-pulse');
+        if (ok) {
+          statusDot.className = 'w-3 h-3 rounded-full bg-emerald-500 transition-colors';
+          statusText.textContent = 'Secured';
+          statusText.className = 'text-3xl font-medium text-emerald-400';
+        } else {
+          statusDot.className = 'w-3 h-3 rounded-full bg-red-500 transition-colors';
+          statusText.textContent = 'Unprotected';
+          statusText.className = 'text-3xl font-medium text-red-400';
+          statusGuide.classList.remove('hidden');
+        }
+      }
+      if (recheckBtn) recheckBtn.addEventListener('click', checkDnsStatus);
+      checkDnsStatus();
+
+      if (noticeSlider) {
+        let currentSlide = 0;
+        const slides = Array.from(noticeSlider.children);
+        const totalSlides = slides.length;
+        
+        function slideNext() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            noticeSlider.style.transform = `translateY(-${currentSlide * 1.5}rem)`;
+        }
+        setInterval(slideNext, 4000);
+      }
+
+      function openPopup(){ if (popupCard) popupCard.style.display = "flex"; }
+      function closePopup(){ if (popupCard) popupCard.style.display = "none"; }
+      if (guideBtn) guideBtn.addEventListener("click", (e) => {e.preventDefault(); openPopup()});
+      window.openPopup = openPopup;
+      window.closePopup = closePopup;
+
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          document.querySelectorAll(".tab-content").forEach((c) => c.classList.add("hidden"));
+          const pane = document.getElementById(btn.dataset.target);
+          if (pane) pane.classList.remove("hidden");
+        });
       });
+
+      let toastTimer;
+      function showToast(message) {
+        if (!toast) return;
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.remove("opacity-0","pointer-events-none");
+        toast.classList.add("opacity-100");
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("opacity-100");
+          toast.classList.add("opacity-0","pointer-events-none");
+        }, 2000);
+      }
+      async function handleCopy(el) {
+        const rawText = el?.dataset?.copy;
+        if (!rawText) return;
+      
+        const textToCopy = String(rawText)
+          .replace(/&#10;|&#x0a;/gi, '\n')
+          .replace(/\\n/g, '\n')
+          .replace(/\r\n/g, '\n')
+          .replace(/\r(?!\n)/g, '\n')
+          .replace(/[\u200B-\u200D\uFEFF]/g, '')
+          .replace(/\n/g, '\r\n');
+      
+        try {
+          if (!navigator.clipboard) {
+             const textArea = document.createElement("textarea");
+             textArea.value = textToCopy;
+             document.body.appendChild(textArea);
+             textArea.focus();
+             textArea.select();
+             try {
+                document.execCommand('copy');
+                showToast('Copied to Clipboard');
+             } catch (err) {
+                console.error('Fallback copy failed', err);
+                showToast('Failed to copy');
+             }
+             document.body.removeChild(textArea);
+             return;
+          }
+
+          await navigator.clipboard.writeText(textToCopy);
+          showToast('Copied to Clipboard');
+      
+        } catch (err) {
+          console.error('Clipboard API failed:', err);
+          showToast('Failed to copy');
+        }
+      }
+      document.body.addEventListener('click', (event) => {
+        const target = event.target.closest('.copy-btn, .copy-btn-text, .copy-dns');
+        if (target) handleCopy(target);
+      });
+
+      async function checkPing(host, timeout = 5000) {
+        const url = `https://${host}/${Math.random().toString(36).slice(2)}`;
+        const start = performance.now();
+        try {
+          await Promise.race([
+            fetch(url, { method:'GET', mode:'no-cors', cache:'no-store' }),
+            new Promise((_, reject) => setTimeout(reject, timeout, new Error("timeout"))),
+          ]);
+          return { ok: true,  rtt: performance.now() - start };
+        } catch {
+          return { ok: false, rtt: performance.now() - start };
+        }
+      }
+      async function updatePingStatus(ms, prefix) {
+        const dot  = document.getElementById("ping-dot-" + prefix);
+        const text = document.getElementById("ping-state-" + prefix);
+        if (!dot || !text) return;
+        
+        if (ms.ok) {
+            dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400";
+            text.textContent = "ONLINE";
+            text.className = "text-[10px] uppercase text-emerald-400 font-bold";
+        } else {
+            dot.className = "w-1.5 h-1.5 rounded-full bg-red-500";
+            text.textContent = "OFFLINE";
+            text.className = "text-[10px] uppercase text-red-500 font-bold";
+        }
+      }
+      async function pingLoop(prefix) {
+        const target = `${prefix}.dns.onetwohour.com`;
+        async function loop() {
+          const latency = await checkPing(target);
+          updatePingStatus(latency, prefix);
+          const delay = latency.ok ? 60_000 : 5_000;
+          setTimeout(loop, delay);
+        }
+        loop();
+      }
+      ["one","two"].forEach(pingLoop);
+
+      function createSpan(ch) {
+        const group = document.createElement("span");
+        group.className = "digit-group";
+        const stack = document.createElement("span");
+        stack.className = "digit-stack";
+        
+        if (ch === "," || ch === ".") {
+             const s = document.createElement("span");
+             s.textContent = ch;
+             stack.appendChild(s);
+             group.appendChild(stack);
+             return group;
+        }
+
+        for (let n = 0; n < 10; n++) {
+          const s = document.createElement("span");
+          s.textContent = n;
+          stack.appendChild(s);
+        }
+        group.appendChild(stack);
+        return group;
+      }
+
+      function updateRollingNumber(el, value) {
+        if (!el) return;
+        const strValue = Number(value).toLocaleString();
+        
+        if (el.children.length !== [...strValue].length) {
+          el.innerHTML = "";
+          [...strValue].forEach(ch => el.appendChild(createSpan(ch)));
+        }
+
+        const unitEl = el.querySelector(".digit-stack span");
+        const unit = unitEl?.getBoundingClientRect().height || 0;
+        
+        [...strValue].forEach((ch, idx) => {
+           const group = el.children[idx];
+           const stack = group.querySelector(".digit-stack");
+           if (/[0-9]/.test(ch)) {
+               stack.style.transform = `translateY(-${Number(ch) * unit}px)`;
+           } else {
+               stack.style.transform = `translateY(0)`;
+           }
+        });
+      }
+
+      async function updateDnsStats() {
+        try {
+          const res = await fetch("/.netlify/functions/stats", { cache: "no-store" });
+          if (!res.ok) throw new Error("API failed");
+          
+          const payload = await res.json();
+          const perServer = Array.isArray(payload.queries) ? payload.queries : null;
+          const totalQueries = perServer
+            ? perServer.reduce((sum, s) => sum + (Number(s.queries) || 0), 0)
+            : Number(payload.queries) || 0;
+          
+          updateRollingNumber(document.getElementById("dns-total"),   totalQueries);
+          updateRollingNumber(document.getElementById("dns-blocked"), Number(payload.blocked) || 0);
+          updateRollingNumber(document.getElementById("dns-ratio"),   Number(payload.ratio) || 0);
+          
+          const recNode = payload.recommended?.node; 
+          document.getElementById('badge-one')?.classList.toggle('hidden', recNode !== 'one');
+          document.getElementById('badge-two')?.classList.toggle('hidden', recNode !== 'two');
+
+        } catch (e) {
+          console.error("Failed to fetch DNS stats:", e);
+        }
+      }
+      updateDnsStats();
+      setInterval(updateDnsStats, 5000);
+    }
+
+    window.addEventListener('DOMContentLoaded', mount);
     </script>
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-4 py-2 uppercase tracking-widest opacity-0 pointer-events-none transition-all duration-300 z-[200]">Copied to Clipboard</div>
+    
   </body>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1c8d017e54aa457b854a6e50458ceef7"}'></script>
 </html>
