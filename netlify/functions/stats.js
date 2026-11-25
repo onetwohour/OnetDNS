@@ -10,22 +10,19 @@ exports.handler = async (event, context) => {
     .map(u => u.trim())
     .filter(Boolean);
 
-  const {
-    API_AUTHORIZATION_HEADER,
-    API_PATH,
-  } = process.env;
+  // One read-only token per server, in the same order as APIURL.
+  const tokens = (process.env.API_TOKENS || '')
+    .split(',')
+    .map(t => t.trim());
 
-  const authHeader = {
-    Authorization: API_AUTHORIZATION_HEADER,
-    Accept: 'application/json',
-  };
-
-  if (!authHeader.Authorization) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Authorization not configured' }) };
+  if (tokens.length !== urls.length || tokens.some(t => !t)) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'API_TOKENS must hold one token per APIURL entry' }) };
   }
 
   const responses = await Promise.all(
-    urls.map(u => fetch(`https://${u}${API_PATH}`, { headers: authHeader }))
+    urls.map((u, idx) => fetch(`https://${u}/v1/stats/history/86400`, {
+      headers: { Authorization: `Bearer ${tokens[idx]}`, Accept: 'application/json' },
+    }))
   );
 
   const failed = responses.find(r => !r.ok);
@@ -35,6 +32,7 @@ exports.handler = async (event, context) => {
   }
 
   const data = await Promise.all(responses.map(r => r.json()));
+  const sum = (d, key) => (d?.points || []).reduce((total, p) => total + (Number(p[key]) || 0), 0);
 
   const detectNodeId = (source, idx) => {
     const s = String(source || '').toLowerCase();
@@ -46,7 +44,7 @@ exports.handler = async (event, context) => {
   };
   
   const queriesPerServer = urls.map((url, idx) => {
-    const q = Number(data[idx]?.num_dns_queries) || 0;
+    const q = sum(data[idx], 'queries');
     return {
       source: url,
       node: detectNodeId(url, idx),
@@ -54,8 +52,8 @@ exports.handler = async (event, context) => {
     };
   });
 
-  const totalBlocked = data.reduce((sum, d) => sum + (Number(d?.num_blocked_filtering) || 0), 0);
-  const totalQueries = data.reduce((sum, d) => sum + (Number(d?.num_dns_queries) || 0), 0);
+  const totalBlocked = data.reduce((total, d) => total + sum(d, 'blocked'), 0);
+  const totalQueries = data.reduce((total, d) => total + sum(d, 'queries'), 0);
   const totalRatio = totalQueries > 0 ? ((totalBlocked / totalQueries) * 100).toFixed(1) : '0.0';
 
   const minEntry = queriesPerServer.reduce((min, cur) => (cur.queries < min.queries ? cur : min), queriesPerServer[0] || { queries: Infinity });
